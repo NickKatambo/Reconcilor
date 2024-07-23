@@ -11,7 +11,7 @@ Reconcilor is designed to store and report production data from mine to mill.
 - Cu: The actual amount of copper in the stope that travels via the belt or RMD. * Tonnes
 - Co: The actual amount of cobalt that enters the Stope and travels via the Belt or RMD.
 - Belt: From the shaft, a conveyor belt
-- Developed: <br>A tunnel: beneath the surface
+- Developed: A tunnel beneath the surface
 - Model: A digital approximation of TCu, TCo, and stope tonnes
 - Shift: The list from the Common Properties class has three components: morning, afternoon, and night.
 
