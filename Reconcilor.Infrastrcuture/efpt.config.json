@@ -1,0 +1,102 @@
+﻿{
+   "CodeGenerationMode": 4,
+   "ContextClassName": "ReconcilorContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "DataContext",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "Reconcilor.Infrastrcuture",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 1,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[BeltsRaw]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Bin]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Level]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Measure]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MineModel]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Mining]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RMD]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Shaft]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Shift]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StockPiles]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StopeDevelopment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Surveyor]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UGStopeDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UGStopesRaw]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UGSurvey]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false
+}
