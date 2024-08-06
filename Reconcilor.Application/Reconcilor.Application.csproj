@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\Reconcilor.Infrastrcuture\Reconcilor.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

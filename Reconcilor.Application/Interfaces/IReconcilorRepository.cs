@@ -2,10 +2,10 @@
 {
     public interface IReconcilorRepository
     {
-        Task<IQueryable<T>> GetDataAsync<T>();
-        Task<T> GetDataAsync<T>(int id);
-        Task<T> SaveDataAsync<T>(T entity);
-        Task<T> UpdateDataAsync<T>(int id,T entity);
-        Task<T> DeleteDataAsync<T>(int id);
+        Task<IQueryable<T>> GetDataAsync<T>() where T : class;
+        Task<T> GetDataAsync<T>(int id) where T : class;
+        Task<T> SaveDataAsync<T>(T entity) where T: class;
+        Task<T> UpdateDataAsync<T>(int id,T entity) where T : class;
+        Task<T> DeleteDataAsync<T>(int id) where T : class;
     }
 }

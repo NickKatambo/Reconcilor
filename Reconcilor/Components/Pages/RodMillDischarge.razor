@@ -1,0 +1,140 @@
+﻿@page "/rmd"
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+
+@inject NotificationService NotificationService
+
+<RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex=@selectedIndex>
+    <Tabs>
+        <RadzenTabsItem Text="RMD Data Entity" title="Rod Mill Discharge">
+            <RadzenAlert Variant="Variant.Filled" AlertStyle="AlertStyle.Primary" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+                Rod Mill Discharge - Data Entry
+            </RadzenAlert>
+            <RadzenRow Gap="1rem">
+                <RadzenColumn Size="12" SizeSM="6">
+                    <RadzenStack>
+                        <RadzenFormField Text="Date From" Variant="@variant">
+                            <RadzenDatePicker @bind-Value="@rodMill.DateFrom" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Cu Grade" Variant="@variant" title="Copper Ore Grade in percent %">
+                            <RadzenNumeric @bind-Value="@rodMill.Cu" title="Copper Ore Grade in percent %" Min="0" Max="100" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Tonnes" Variant="@variant" title="Tonnes hoisted">
+                            <RadzenNumeric @bind-Value="@rodMill.Tonnes" title="Tonnes hoisted" />
+                        </RadzenFormField>
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeSM="6">
+                    <RadzenStack>
+                        <RadzenFormField Text="Date To" Variant="@variant">
+                            <RadzenDatePicker @bind-Value="@rodMill.DateTo" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Co Grade" Variant="@variant" title="Cobalt Ore Grade in percent %">
+                            <RadzenNumeric @bind-Value="@rodMill.Co" title="Cobalt Ore Grade in percent %" Min="0" Max="100" />
+                        </RadzenFormField>
+                        <RadzenFormField Text="Comment" Variant="@variant">
+                            <RadzenTextArea @bind-Value="@rodMill.Comment" Placeholder="Enter comment here..." />
+                        </RadzenFormField>
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenStack Gap="1rem" class="mt-2">
+                <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+            </RadzenStack>
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="RMD Details" title="Rod Mill Discharge Details">
+            <RadzenCard >
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="1px">
+                    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
+                                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                    Data="@rodMillDischargeList" ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or">
+                        <Columns>
+                            <RadzenDataGridColumn Property="@nameof(RMD.Id)" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" Width="100px" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.DateFrom)" Title="Date From" FormatString="{0:d}" Frozen="true" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.DateTo)" Title="Date To" FormatString="{0:d}" Frozen="true" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.Cu)" Title="Cu" Frozen="true" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.Co)" Title="Co" Frozen="true" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.Tonnes)" Title="Tonnes" Frozen="true" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.TCu)" Title="TCu" Frozen="true" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.TCo)" Title="TCo" Frozen="true" />
+                            <RadzenDataGridColumn Property="@nameof(RMD.EnteredOn)" Title="Logged On" Frozen="true" />
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenStack>
+            </RadzenCard>
+
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+
+@code {
+    Variant variant = Variant.Outlined;
+    int selectedIndex = 0;
+    public RMD rodMill = new();
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    IEnumerable<RMD> rodMillDischargeList = Enumerable.Empty<RMD>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        rodMill.DateFrom = DateTime.Now;
+        rodMill.DateTo = DateTime.Now;
+
+        rodMillDischargeList = await _repository.GetDataAsync<RMD>();
+    }
+
+    void SubmitData()
+    {
+        if (string.IsNullOrEmpty(rodMill.Comment))
+        {
+            AlertMessage("Comment is a required field", NotificationSeverity.Warning);
+            return;
+        }
+        else
+        {
+            try
+            {
+                rodMill.Id = 0;
+                rodMill.EnteredOn = DateTime.Now;
+                rodMill.EnteredBy = "admin";
+                rodMill.TCu = ReconUtility.CalculateContaintedGrade(rodMill.Cu, rodMill.Tonnes);
+                rodMill.TCo = ReconUtility.CalculateContaintedGrade(rodMill.Co, rodMill.Tonnes);
+
+                var result = _repository.SaveDataAsync(rodMill);
+                if (result is not null && result.Result is not null)
+                {
+                    AlertMessage("Rod mill discharge results save successfullly", NotificationSeverity.Success);
+                    selectedIndex = 1;
+                    rodMill = new();
+                    rodMill.DateFrom = DateTime.Now;
+                    rodMill.DateTo = DateTime.Now;
+                }
+                else
+                {
+                    AlertMessage("Error saving rod mill discharge results", NotificationSeverity.Error);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+            }
+        }
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+}

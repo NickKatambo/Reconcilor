@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcilor.Domain", "Reconc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcilor.Application", "Reconcilor.Application\Reconcilor.Application.csproj", "{7E08A49D-13AB-49E8-87F5-58491B35A60A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcilor.Infrastrcuture", "Reconcilor.Infrastrcuture\Reconcilor.Infrastrcuture.csproj", "{3810E952-11F5-45C1-A3DC-BA1D38CC958A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcilor.Infrastructure", "Reconcilor.Infrastrcuture\Reconcilor.Infrastructure.csproj", "{3810E952-11F5-45C1-A3DC-BA1D38CC958A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reconcilor", "Reconcilor\Reconcilor.csproj", "{D8D77BDF-5254-484F-B064-5E5F39725AA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reconcilor", "Reconcilor\Reconcilor.csproj", "{D8D77BDF-5254-484F-B064-5E5F39725AA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
