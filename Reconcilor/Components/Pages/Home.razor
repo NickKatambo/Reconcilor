@@ -3,26 +3,29 @@
 <PageTitle>Home</PageTitle>
 @using System.Globalization
 
-<RadzenStack class="rz-p-0 rz-p-md-6 rz-p-lg-12">
-    <RadzenCard Variant="Variant.Outlined">
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Wrap="FlexWrap.Wrap">
-            <RadzenCheckBox @bind-Value="@annotation" Name="annotation"></RadzenCheckBox>
-            <RadzenLabel Text="Annotation" Component="annotation" />
-        </RadzenStack>
-    </RadzenCard>
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-1 rz-p-md-12 rz-base-lighter">
+    <RadzenStack class="rz-p-0 rz-p-md-6 rz-p-lg-12">
+        <RadzenCard Variant="Variant.Outlined">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                <RadzenCheckBox @bind-Value="@annotation" Name="annotation"></RadzenCheckBox>
+                <RadzenLabel Text="Annotation" Component="annotation" />
+            </RadzenStack>
+        </RadzenCard>
 
-    <RadzenChart>
-        <RadzenLineSeries Smooth="true" Data="@revenue2023" CategoryProperty="Date" Title="2023" ValueProperty="Revenue" RenderingOrder="1">
-            <RadzenSeriesAnnotation Visible="@annotation" TItem="DataItem" Data="@revenue2023[7]" OffsetY="-16" Text="Acquisition" />
-            <RadzenMarkers MarkerType="MarkerType.Circle" />
-        </RadzenLineSeries>
-        <RadzenCategoryAxis Padding="20" />
-        <RadzenValueAxis Formatter="@FormatAsUSD">
-            <RadzenGridLines Visible="true" />
-            <RadzenAxisTitle Text="Revenue in USD" />
-        </RadzenValueAxis>
-    </RadzenChart>
-</RadzenStack>
+        <RadzenChart>
+            <RadzenLineSeries Smooth="true" Data="@revenue2023" CategoryProperty="Date" Title="2023" ValueProperty="Revenue" RenderingOrder="1">
+                <RadzenSeriesAnnotation Visible="@annotation" TItem="DataItem" Data="@revenue2023[7]" OffsetY="-16" Text="Acquisition" />
+                <RadzenMarkers MarkerType="MarkerType.Circle" />
+            </RadzenLineSeries>
+            <RadzenCategoryAxis Padding="20" />
+            <RadzenValueAxis Formatter="@FormatAsUSD">
+                <RadzenGridLines Visible="true" />
+                <RadzenAxisTitle Text="Revenue in USD" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </RadzenStack>
+</RadzenCard>
+
 
 @code {
     bool annotation = true;

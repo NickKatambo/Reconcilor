@@ -1,0 +1,108 @@
+﻿@page "/bins"
+
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+
+<RadzenAlert Variant="Variant.Filled" Icon="add_shopping_cart" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Bins / Stockpiles
+</RadzenAlert>
+
+<RadzenCard class="rz-my-12 rz-mx-auto">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Bin" Variant="@variant" title="Bin name">
+                    <RadzenTextBox @bind-Value="@bin.Description" Placeholder="Enter bin name here" Style="width: 100%;" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal" Gap="0">
+        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard class="rz-p-md-12">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" Data="@binList"
+                        ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or" class="rz-secondary-dark">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(bin.Description)" Title="Bin name" Frozen="true" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected NotificationService NotificationService { get; set; }
+
+    public Bin bin = new();
+    private Variant variant = Variant.Outlined;
+    private IEnumerable<Bin> binList = Enumerable.Empty<Bin>();
+    private RadzenDataGrid<Bin> dataGrid;
+    protected int count;
+
+    async Task SubmitData()
+    {
+        if (string.IsNullOrEmpty(bin.Description))
+        {
+            AlertMessage("Bin name is a required field", NotificationSeverity.Warning);
+            return;
+        }
+        else
+        {
+            try
+            {
+                bin.StockPId = 0;
+                var result = _repository.SaveDataAsync(bin);
+                if (result is not null && result.Result is not null)
+                {
+                    AlertMessage("Bin saved successfullly", NotificationSeverity.Success);
+                    bin = new();
+
+                    await LoadDataAsync();
+                    await dataGrid.Reload();
+                }
+                else
+                {
+                    AlertMessage("Error while saving bin", NotificationSeverity.Error);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+
+    private async Task LoadDataAsync()
+    {
+        binList = await _repository.GetDataAsync<Bin>();
+        count = binList.Count();
+    }
+}

@@ -4,86 +4,106 @@
 
 @inject NotificationService NotificationService
 
-<RadzenTabs RenderMode="TabRenderMode.Client" @bind-SelectedIndex=@selectedIndex>
-    <Tabs>
-        <RadzenTabsItem Text="RMD Data Entity" title="Rod Mill Discharge">
-            <RadzenAlert Variant="Variant.Filled" AlertStyle="AlertStyle.Primary" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
-                Rod Mill Discharge - Data Entry
-            </RadzenAlert>
-            <RadzenRow Gap="1rem">
-                <RadzenColumn Size="12" SizeSM="6">
-                    <RadzenStack>
-                        <RadzenFormField Text="Date From" Variant="@variant">
-                            <RadzenDatePicker @bind-Value="@rodMill.DateFrom" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
-                        </RadzenFormField>
-                        <RadzenFormField Text="Cu Grade" Variant="@variant" title="Copper Ore Grade in percent %">
-                            <RadzenNumeric @bind-Value="@rodMill.Cu" title="Copper Ore Grade in percent %" Min="0" Max="100" />
-                        </RadzenFormField>
-                        <RadzenFormField Text="Tonnes" Variant="@variant" title="Tonnes hoisted">
-                            <RadzenNumeric @bind-Value="@rodMill.Tonnes" title="Tonnes hoisted" />
-                        </RadzenFormField>
-                    </RadzenStack>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeSM="6">
-                    <RadzenStack>
-                        <RadzenFormField Text="Date To" Variant="@variant">
-                            <RadzenDatePicker @bind-Value="@rodMill.DateTo" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
-                        </RadzenFormField>
-                        <RadzenFormField Text="Co Grade" Variant="@variant" title="Cobalt Ore Grade in percent %">
-                            <RadzenNumeric @bind-Value="@rodMill.Co" title="Cobalt Ore Grade in percent %" Min="0" Max="100" />
-                        </RadzenFormField>
-                        <RadzenFormField Text="Comment" Variant="@variant">
-                            <RadzenTextArea @bind-Value="@rodMill.Comment" Placeholder="Enter comment here..." />
-                        </RadzenFormField>
-                    </RadzenStack>
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenStack Gap="1rem" class="mt-2">
-                <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+<RadzenAlert Variant="Variant.Filled" Icon="assignment_returned" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Rod Mill Discharge (RMD)
+</RadzenAlert>
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-1 rz-p-md-12 rz-base-lighter">
+    <RadzenRow >
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Date From" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@rodMill.DateFrom" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+                <RadzenFormField Text="Cu Grade" Variant="@variant" title="Copper Ore Grade in percent %">
+                    <RadzenNumeric @bind-Value="@rodMill.Cu" title="Copper Ore Grade in percent %" Min="0" Max="100" />
+                </RadzenFormField>
+                <RadzenFormField Text="Tonnes" Variant="@variant" title="Tonnes hoisted">
+                    <RadzenNumeric @bind-Value="@rodMill.Tonnes" title="Tonnes hoisted" />
+                </RadzenFormField>
             </RadzenStack>
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="RMD Details" title="Rod Mill Discharge Details">
-            <RadzenCard >
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="1px">
-                    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
-                                    AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                                    Data="@rodMillDischargeList" ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or">
-                        <Columns>
-                            <RadzenDataGridColumn Property="@nameof(RMD.Id)" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" Width="100px" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.DateFrom)" Title="Date From" FormatString="{0:d}" Frozen="true" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.DateTo)" Title="Date To" FormatString="{0:d}" Frozen="true" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.Cu)" Title="Cu" Frozen="true" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.Co)" Title="Co" Frozen="true" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.Tonnes)" Title="Tonnes" Frozen="true" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.TCu)" Title="TCu" Frozen="true" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.TCo)" Title="TCo" Frozen="true" />
-                            <RadzenDataGridColumn Property="@nameof(RMD.EnteredOn)" Title="Logged On" Frozen="true" />
-                        </Columns>
-                    </RadzenDataGrid>
-                </RadzenStack>
-            </RadzenCard>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Date To" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@rodMill.DateTo" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+                <RadzenFormField Text="Co Grade" Variant="@variant" title="Cobalt Ore Grade in percent %">
+                    <RadzenNumeric @bind-Value="@rodMill.Co" title="Cobalt Ore Grade in percent %" Min="0" Max="100" />
+                </RadzenFormField>
+                <RadzenFormField Text="Comment" Variant="@variant">
+                    <RadzenTextArea @bind-Value="@rodMill.Comment" Placeholder="Enter comment here..." />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack Gap="1rem" class="mt-2">
+        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
 
-        </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-md-12">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="1px">
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@rodMillDischargeList.OrderByDescending(x => x.Id)" ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(RMD.Id)" HeaderCssClass="rz-secondary-light" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" Width="100px" />
+                <RadzenDataGridColumn Property="@nameof(RMD.DateFrom)" Title="Date From" FormatString="{0:d}" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(RMD.DateTo)" Title="Date To" FormatString="{0:d}" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(RMD.Cu)" Title="Cu" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(RMD.Co)" Title="Co" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(RMD.Tonnes)" Title="Tonnes" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(RMD.TCu)" Title="TCu" Frozen="true" FormatString="{0:0.##}" />
+                <RadzenDataGridColumn Property="@nameof(RMD.TCo)" Title="TCo" Frozen="true" FormatString="{0:0.##}" />
+                <RadzenDataGridColumn Property="@nameof(RMD.EnteredOn)" Title="Logged On" Frozen="true" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
 
 @code {
     Variant variant = Variant.Outlined;
-    int selectedIndex = 0;
     public RMD rodMill = new();
     [Inject] private IReconcilorRepository _repository { get; set; } = default!;
-    IEnumerable<RMD> rodMillDischargeList = Enumerable.Empty<RMD>();
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+
+    protected int count;
+    private IEnumerable<RMD> rodMillDischargeList = Enumerable.Empty<RMD>();
+    private RadzenDataGrid<RMD> dataGrid;
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
         rodMill.DateFrom = DateTime.Now;
         rodMill.DateTo = DateTime.Now;
-
-        rodMillDischargeList = await _repository.GetDataAsync<RMD>();
+        await LoadDataAsync();
     }
 
-    void SubmitData()
+    private async Task LoadDataAsync()
+    {
+        rodMillDischargeList = await _repository.GetDataAsync<RMD>();
+        count = rodMillDischargeList.Count();
+    }
+
+    protected async Task EditRow(RMD args)
+    {
+        //await DialogService.OpenAsync<EditRMD>("Edit RMD", new Dictionary<string, object> { { "Id", args.Id } });
+        await dataGrid.Reload();
+    }
+
+    protected async Task Grid0LoadData(LoadDataArgs args)
+    {
+        try
+        {
+            rodMillDischargeList = await _repository.GetDataAsync<RMD>();
+            count = rodMillDischargeList.Count();
+        }
+        catch (System.Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"Unable to load RMDs" });
+        }
+    }
+
+    async Task SubmitData()
     {
         if (string.IsNullOrEmpty(rodMill.Comment))
         {
@@ -103,11 +123,13 @@
                 var result = _repository.SaveDataAsync(rodMill);
                 if (result is not null && result.Result is not null)
                 {
-                    AlertMessage("Rod mill discharge results save successfullly", NotificationSeverity.Success);
-                    selectedIndex = 1;
+                    AlertMessage("RMD results saved successfullly", NotificationSeverity.Success);
                     rodMill = new();
                     rodMill.DateFrom = DateTime.Now;
                     rodMill.DateTo = DateTime.Now;
+
+                    await LoadDataAsync();
+                    await dataGrid.Reload();
                 }
                 else
                 {
@@ -136,5 +158,55 @@
     void ShowNotification(NotificationMessage message)
     {
         NotificationService.Notify(message);
+    }
+
+    protected async Task ExportClick(RadzenSplitButtonItem args)
+    {
+        // if (args?.Value == "csv")
+        // {
+        //     await ReconcilorService.ExportRMDsToCSV(new Query
+        //         {
+        //             Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter) ? "true" : grid0.Query.Filter)}",
+        //             OrderBy = $"{grid0.Query.OrderBy}",
+        //             Expand = "",
+        //             Select = string.Join(",", grid0.ColumnsCollection.Where(c => c.GetVisible() && !string.IsNullOrEmpty(c.Property)).Select(c => c.Property.Contains(".") ? c.Property + " as " + c.Property.Replace(".", "") : c.Property))
+        //         }, "RMDs");
+        // }
+
+        // if (args == null || args.Value == "xlsx")
+        // {
+        //     await ReconcilorService.ExportRMDsToExcel(new Query
+        //         {
+        //             Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter) ? "true" : grid0.Query.Filter)}",
+        //             OrderBy = $"{grid0.Query.OrderBy}",
+        //             Expand = "",
+        //             Select = string.Join(",", grid0.ColumnsCollection.Where(c => c.GetVisible() && !string.IsNullOrEmpty(c.Property)).Select(c => c.Property.Contains(".") ? c.Property + " as " + c.Property.Replace(".", "") : c.Property))
+        //         }, "RMDs");
+        // }
+    }
+
+    protected async Task GridDeleteButtonClick(MouseEventArgs args, RMD rmd)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+            {
+                var deleteResult = await _repository.DeleteDataAsync<RMD>(id: rmd.Id);
+
+                if (deleteResult != null)
+                {
+                    await dataGrid.Reload();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = $"Error",
+                    Detail = $"Unable to delete RMD"
+                });
+        }
     }
 }
