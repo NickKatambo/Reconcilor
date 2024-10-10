@@ -7,7 +7,7 @@
     Shafts
 </RadzenAlert>
 
-<RadzenCard class="rz-my-12 rz-mx-auto">
+<RadzenCard>
     <RadzenRow>
         <RadzenColumn Size="12" SizeSM="6">
             <RadzenStack>
@@ -22,9 +22,9 @@
     </RadzenStack>
 </RadzenCard>
 
-<RadzenCard class="rz-p-md-12">
+<RadzenCard class="mt-3">
     <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
-        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5"
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" Data="@shaftList" 
                         ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or" class="rz-secondary-dark">
             <Columns>
@@ -62,7 +62,7 @@
                 var result = _repository.SaveDataAsync(shaft);
                 if (result is not null && result.Result is not null)
                 {
-                    AlertMessage("Shaft saved successfullly", NotificationSeverity.Success);
+                    AlertMessage("Shaft saved successfully", NotificationSeverity.Success);
                     shaft = new();
 
                     await LoadDataAsync();

@@ -16,7 +16,7 @@ public partial class Bin
 
     [StringLength(150)]
     [Unicode(false)]
-    public string Description { get; set; }
+    public string BinName { get; set; }
 
     [InverseProperty("StockP")]
     public virtual ICollection<StockPile> StockPiles { get; set; } = new List<StockPile>();

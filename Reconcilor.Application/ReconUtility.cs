@@ -3,7 +3,7 @@
     public class ReconUtility
     {
 
-        public static decimal CalculateContaintedGrade(decimal gradeValue, decimal tonnes)
+        public static decimal CalculateTotalGrade(decimal gradeValue, decimal tonnes)
         {
 			try
 			{
@@ -17,6 +17,22 @@
 			{
 				throw;
 			}
+        }
+
+        public static decimal CalculateDryTonnes(decimal WetTonnes, decimal Moisture)
+        {
+            try
+            {
+                return (WetTonnes -(WetTonnes - (Moisture / 100) * WetTonnes));
+            }
+            catch (DivideByZeroException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

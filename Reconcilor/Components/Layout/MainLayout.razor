@@ -3,48 +3,54 @@
 
 <RadzenLayout>
     <RadzenHeader>
-        <RadzenRow JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenColumn Size="5">
-                <RadzenSidebarToggle Click="@SidebarToggleClick"></RadzenSidebarToggle>
-            </RadzenColumn>
-            <RadzenColumn Size="7">
-                <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-                    <RadzenProfileMenu Click="@ProfileMenuClick">
-                        <ChildContent>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@SidebarToggleClick" />
+            <RadzenLabel Text="Reconcilor 1.0" />
+        </RadzenStack>
+@*         <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+            <RadzenProfileMenu Click="@ProfileMenuClick">
+                <ChildContent>
 
-                            <RadzenProfileMenuItem Path="profile" Icon="settings" Text="Profile" />
-                            <RadzenProfileMenuItem Path="application-users" Icon="person" Text="Users" />
-                            <RadzenProfileMenuItem Path="application-roles" Icon="security" Text="Roles" />
-                            <RadzenProfileMenuItem Text="Logout" Value="Logout" Icon="power_settings_new" />
-                        </ChildContent>
-                        <Template>
-                            @* @Security.User?.Name *@
-                            @* <RadzenGravatar Email="@Security.User?.Name" /> *@
-                        </Template>
-                    </RadzenProfileMenu>
-                </RadzenStack>
-            </RadzenColumn>
-        </RadzenRow>
+                    <RadzenProfileMenuItem Path="profile" Icon="settings" Text="Profile" />
+                    <RadzenProfileMenuItem Path="application-users" Icon="person" Text="Users" />
+                    <RadzenProfileMenuItem Path="application-roles" Icon="security" Text="Roles" />
+                    <RadzenProfileMenuItem Text="Logout" Value="Logout" Icon="power_settings_new" />
+                </ChildContent>
+                <Template>
+                    @Security.User?.Name
+                     <RadzenGravatar Email="@Security.User?.Name" />
+                </Template>
+            </RadzenProfileMenu>
+        </RadzenStack> *@
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebarExpanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Icon="home" />
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
+            <RadzenPanelMenuItem Text="Dashboard" Icon="donut_small" Path="dashboard" />
              <RadzenPanelMenuItem Text="Data" Icon="note_add">
                 <RadzenPanelMenuItem Text="RMD" title="Rod Mill Discharge" Path="rmd" Icon="assignment_returned"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="TextBox" Path="textbox" Icon="input"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="TextArea" Path="textarea" Icon="description"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Belts Raw" title="Belts Raw" Path="beltraw" Icon="cached"></RadzenPanelMenuItem>
+@*                 <RadzenPanelMenuItem Text="TextArea" Path="textarea" Icon="description"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Password" Path="password" Icon="payment"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Numeric" Path="numeric" Icon="aspect_ratio"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="DatePicker" Path="datepicker" Icon="date_range"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="DatePicker" Path="datepicker" Icon="date_range"></RadzenPanelMenuItem> *@
+            </RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Stock Piles" Icon="get_app">
+                <RadzenPanelMenuItem Text="Stock Piles" Path="stockpiles" Icon="change_history"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Trends" Path="stocktrend" Icon="assessment"></RadzenPanelMenuItem>
+            </RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Survey" Icon="lightbulb">
+                <RadzenPanelMenuItem Text="UG Survey" Path="stockpiles" Icon="change_history"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Trends" Path="stocktrend" Icon="donut_small"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="Settings" Icon="build">
                 <RadzenPanelMenuItem Text="Shafts" Path="shafts" Icon="dns"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Bin" Path="bins" Icon="add_shopping_cart"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="DropDown" Path="dropdown" Icon="dns"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="DropDownDataGrid" Path="dropdown-datagrid" Icon="receipt"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="ListBox" Path="listbox" Icon="view_list"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="Auth Required" Path="auth" Icon="account_circle"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="Register" Path="Account/Register" Icon="account_circle"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Model" Path="minemodel" Icon="open_with"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Tasks" Path="dropdown-datagrid" Icon="receipt"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="System Health" Path="listbox" Icon="view_list"></RadzenPanelMenuItem>
+@*                 <RadzenPanelMenuItem Text="Auth Required" Path="auth" Icon="account_circle"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Register" Path="Account/Register" Icon="account_circle"></RadzenPanelMenuItem> *@
                 <RadzenPanelMenuItem Text="Login" Path="Account/Login" Icon="account_circle"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
         </RadzenPanelMenu>

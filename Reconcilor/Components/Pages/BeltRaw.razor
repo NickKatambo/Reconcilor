@@ -1,0 +1,91 @@
+﻿@page "/beltraw"
+@using Microsoft.EntityFrameworkCore
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+@using Reconcilor.Application.Services
+@inherits BeltRawBase
+
+<PageTitle>Belts Raw</PageTitle>
+
+<RadzenAlert Variant="Variant.Filled" Icon="assignment_returned" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Belts Raw
+</RadzenAlert>
+<RadzenCard class="rz-mx-auto rz-p-md-12 rz-base-lighter">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Shaft" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@beltsRaw.ShaftId Data=@shaftList Placeholder="Choose Shaft"
+                                    TextProperty="@nameof(Shaft.ShaftName)" ValueProperty="@nameof(Shaft.ShaftId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Shift" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@beltsRaw.ShiftId Data=@shiftList Placeholder="Choose Shift"
+                                    TextProperty="@nameof(Shift.ShiftName)" ValueProperty="@nameof(Shift.Id)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Wet Tonnes" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@beltsRaw.WetTonnes" Min="0" Max="1000000" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Sample ID" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@beltsRaw.SampleId" Min="0" Max="1000000" Placeholder="Enter LIMS ID" />
+                </RadzenFormField>
+                <RadzenFormField Text="TCu (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@beltsRaw.TCu" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="TCo (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@beltsRaw.TCo" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="Moisture (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@beltsRaw.Moisture" Min="0" Max="1000000" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal">
+        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenDataGrid @ref="dataGrid" Data="@BeltsList.OrderByDescending(x => x.Id)" TItem="BeltsRaw" AllowPaging="true" AllowSorting="true" PageSize="10" AllowColumnResize="true"
+                        AllowFiltering="true" FilterMode="FilterMode.Advanced" PagerHorizontalAlign="HorizontalAlign.Center" ColumnWidth="auto" IsLoading=@isLoading
+                        ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="BeltsRaw" Title="Shaft" Sortable="true">
+                    <Template>
+                        @context.Shaft.ShaftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="WetTonnes" Title="Wet Tonnes" FormatString="{0:0,##.00}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Tonnes" Title="DMT" FormatString="{0:0,##.00}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="TCu" Title="TCu %" FormatString="{0:0.##}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="TCo" Title="TCo %" FormatString="{0:0.##}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Cu" Title="Cu %" FormatString="{0:0.##}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Co" Title="Co %" FormatString="{0:0.##}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Moisture" Title="Moisture %" FormatString="{0:0.##}" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Title="Shift" Sortable="true" SortProperty="Shift" Frozen="true">
+                    <Template>
+                        @context.Shift.ShiftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="SampleId" Title="Sample #" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(BeltsRaw.EnteredOn)" Title="Date" FormatString="{0:d}" Frozen="true" />
+@*                 <RadzenDataGridColumn TItem="BeltsRaw" Title="Date" FormatString="{0:d}" Filterable="true">
+                    <Template>
+                        @context.EnteredOn.ToString("dd-MMM-yy")
+                    </Template>
+                    <FilterTemplate>
+                        <RadzenDatePicker @bind-Value="dateFilter" CurrentDateChanged="@(OnFilterChanged)" />
+                    </FilterTemplate>
+                </RadzenDataGridColumn> *@
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+

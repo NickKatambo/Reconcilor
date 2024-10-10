@@ -19,7 +19,7 @@ public partial class Shaft
     [Unicode(false)]
     public string ShaftName { get; set; }
 
-    [InverseProperty("ShaftNavigation")]
+    [InverseProperty("Shaft")]
     public virtual ICollection<BeltsRaw> BeltsRaws { get; set; } = new List<BeltsRaw>();
 
     [InverseProperty("Shaft")]

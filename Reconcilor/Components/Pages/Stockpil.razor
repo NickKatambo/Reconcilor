@@ -1,0 +1,187 @@
+﻿@page "/stockpiles"
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+@using Reconcilor.Application.Services
+@using Reconcilor.Domain.ViewModels
+
+@inject NotificationService NotificationService
+<PageTitle>Stock Piles</PageTitle>
+
+<RadzenAlert Variant="Variant.Filled" Icon="assignment_returned" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Stock Piles
+</RadzenAlert>
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-md-12 rz-base-lighter">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Stock Pile" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stockPile.StockPId Data=@_bins 
+                    TextProperty="@nameof(Bin.BinName)" ValueProperty="@nameof(Bin.StockPId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Opening Tonnes" Variant="@variant" >
+                    <RadzenNumeric @bind-Value="@stockPile.OpeningTonnes" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="Date From" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stockPile.DateFrom" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenStack class="rz-p-6">
+                </RadzenStack>
+                <RadzenFormField Text="Closing Tonnes" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stockPile.ClosingTonnes" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="Date To" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stockPile.DateTo" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal">
+        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard class="rz-my-12 rz-mx-auto rz-p-md-12">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="1px">
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="15"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@stockPileList.OrderByDescending(x => x.Id)" ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.BinName)" HeaderCssClass="rz-secondary-light" Title="Bin" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.OpeningTonnes)" Title="Opening Tonnes" Frozen="true" FormatString="{0:0.##}" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.ClosingTonnes)" Title="Closing Tonnes" Frozen="true" FormatString="{0:0.##}" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.DateFrom)" Title="Date From" FormatString="{0:d}" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.DateTo)" Title="Date To" FormatString="{0:d}" Frozen="true" />               
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.EnteredOn)" Title="Logged On" Frozen="true" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    Variant variant = Variant.Outlined;
+    public StockPile stockPile = new();
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected StockPileService stockPileService { get; set; } = default!;
+
+    IEnumerable<Bin> _bins;
+
+    protected int count;
+    private IEnumerable<StockPileViewModel> stockPileList = Enumerable.Empty<StockPileViewModel>();
+    private RadzenDataGrid<StockPileViewModel> dataGrid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        stockPile.DateFrom = DateTime.Now;
+        stockPile.DateTo = DateTime.Now;
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        _bins = await stockPileService.GetBinAsync();
+        stockPileList = await stockPileService.GetStockPileBinAsync();
+        count = stockPileList.Count();
+    }
+
+    protected async Task EditRow(RMD args)
+    {
+        //await DialogService.OpenAsync<EditRMD>("Edit RMD", new Dictionary<string, object> { { "Id", args.Id } });
+        await dataGrid.Reload();
+    }
+
+    async Task SubmitData()
+    {
+        if (stockPile.StockPId <= 0)
+        {
+            AlertMessage("Select stock pile or bin from the list", NotificationSeverity.Warning);
+            return;
+        }
+        if (stockPile.OpeningTonnes < 0)
+        {
+            AlertMessage("Opening tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+            return;
+        }
+        if (stockPile.ClosingTonnes < 0)
+        {
+            AlertMessage("Closing tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+            return;
+        }
+        else
+        {
+            try
+            {
+                stockPile.Id = 0;
+                stockPile.EnteredOn = DateTime.Now;
+                stockPile.EnteredBy = "admin";
+
+                var result = _repository.SaveDataAsync(stockPile);
+                if (result is not null && result.Result is not null)
+                {
+                    AlertMessage("Stock pile results saved successfully", NotificationSeverity.Success);
+                    stockPile = new();
+                    stockPile.DateFrom = DateTime.Now;
+                    stockPile.DateTo = DateTime.Now;
+
+                    await LoadDataAsync();
+                    await dataGrid.Reload();
+                }
+                else
+                {
+                    AlertMessage("Error saving stock pile results", NotificationSeverity.Error);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+            }
+        }
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+
+    protected async Task GridDeleteButtonClick(MouseEventArgs args, RMD rmd)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+            {
+                var deleteResult = await _repository.DeleteDataAsync<RMD>(id: rmd.Id);
+
+                if (deleteResult != null)
+                {
+                    await dataGrid.Reload();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = $"Error",
+                    Detail = $"Unable to delete RMD"
+                });
+        }
+    }
+}

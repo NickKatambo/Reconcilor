@@ -48,6 +48,7 @@ namespace Reconcilor
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
             builder.Services.AddScoped<IReconcilorRepository, ReconcilorService>();
+            builder.Services.AddScoped<StockPileService>();
             builder.Services.AddScoped<ReconUtility>();
             builder.Services.AddRadzenComponents();
 

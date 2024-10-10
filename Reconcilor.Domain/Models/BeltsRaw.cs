@@ -14,9 +14,6 @@ public partial class BeltsRaw
     [Key]
     public int Id { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime DateLogged { get; set; }
-
     public int ShaftId { get; set; }
 
     public int ShiftId { get; set; }
@@ -27,6 +24,9 @@ public partial class BeltsRaw
     [StringLength(20)]
     [Unicode(false)]
     public string SampleId { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal Tonnes { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? TCu { get; set; }
@@ -48,7 +48,7 @@ public partial class BeltsRaw
     public string Comment { get; set; }
 
     [Column(TypeName = "datetime")]
-    public DateTime? EnteredOn { get; set; }
+    public DateTime EnteredOn { get; set; }
 
     [StringLength(50)]
     [Unicode(false)]
@@ -56,9 +56,9 @@ public partial class BeltsRaw
 
     [ForeignKey("ShaftId")]
     [InverseProperty("BeltsRaws")]
-    public virtual Shift Shaft { get; set; }
+    public virtual Shaft Shaft { get; set; }
 
-    [ForeignKey("ShaftId")]
+    [ForeignKey("ShiftId")]
     [InverseProperty("BeltsRaws")]
-    public virtual Shaft ShaftNavigation { get; set; }
+    public virtual Shift Shift { get; set; }
 }
