@@ -1,6 +1,50 @@
 ﻿@page "/stocktrend"
-<h3>StockpilTrend</h3>
+@using Reconcilor.Application.Interfaces
+@using Reconcilor.Application.Services
+<PageTitle>Stock Piles Trends</PageTitle>
+
+<RadzenAlert Variant="Variant.Filled" Icon="assignment_returned" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Stock Piles Trends
+</RadzenAlert>
+<RadzenCard class="rz-mx-auto rz-base-lighter">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Date From" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stockPile.DateFrom" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+                <RadzenFormField Text="Stock Pile" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stockPile.StockPId Data=@_bins Placeholder="Choose One"
+                                    TextProperty="@nameof(Bin.BinName)" ValueProperty="@nameof(Bin.StockPId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Date To" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stockPile.DateTo" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+                <RadzenStack class="rz-p-3">
+                    <RadzenButton ButtonType="ButtonType.Submit" Icon="autorenew" Size="ButtonSize.Medium" Text="Refresh" ButtonStyle="ButtonStyle.Primary"></RadzenButton>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
 
 @code {
+    Variant variant = Variant.Outlined;
+    public StockPile stockPile = new()
+    {
+        DateFrom = DateTime.Now.AddDays(-7),
+        DateTo = DateTime.Now
+    };
+
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected StockPileService stockPileService { get; set; } = default!;
+
+    IEnumerable<Bin> _bins;
 
 }

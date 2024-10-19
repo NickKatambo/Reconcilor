@@ -7,7 +7,7 @@
 <RadzenAlert Variant="Variant.Filled" Icon="assignment_returned" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
     Rod Mill Discharge (RMD)
 </RadzenAlert>
-<RadzenCard class="rz-mx-auto rz-p-md-12 rz-base-lighter">
+<RadzenCard class="rz-mx-auto rz-base-lighter">
     <RadzenRow >
         <RadzenColumn Size="12" SizeSM="6">
             <RadzenStack>
@@ -15,10 +15,10 @@
                     <RadzenDatePicker @bind-Value="@rodMill.DateFrom" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
                 </RadzenFormField>
                 <RadzenFormField Text="Tonnes" Variant="@variant" title="Tonnes hoisted">
-                    <RadzenNumeric @bind-Value="@rodMill.Tonnes" title="Tonnes hoisted" />
+                    <RadzenNumeric @bind-Value="@rodMill.Tonnes" title="Tonnes hoisted" Min="0" />
                 </RadzenFormField>
                 <RadzenFormField Text="Cu or Contained Cu" Variant="@variant" title="Contained Cu">
-                    <RadzenNumeric @bind-Value="@rodMill.Cu" title="Contained Cu" Min="0" Max="100" />
+                    <RadzenNumeric @bind-Value="@rodMill.Cu" title="Contained Cu" Min="0" Max="1000000" />
                 </RadzenFormField>
             </RadzenStack>
         </RadzenColumn>
@@ -28,7 +28,7 @@
                     <RadzenDatePicker @bind-Value="@rodMill.DateTo" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
                 </RadzenFormField>
                 <RadzenFormField Text="Co Grade or Contained Co" Variant="@variant" title="Contained Co">
-                    <RadzenNumeric @bind-Value="@rodMill.Co" title="Contained Co" Min="0" Max="100" />
+                    <RadzenNumeric @bind-Value="@rodMill.Co" title="Contained Co" Min="0" Max="1000000" />
                 </RadzenFormField>
                 <RadzenFormField Text="Comment" Variant="@variant">
                     <RadzenTextArea @bind-Value="@rodMill.Comment" Placeholder="Enter comment here..." />
@@ -36,26 +36,26 @@
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal">
-        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal">       
+        <RadzenButton Click=@SubmitData Text="Submit" Icon="check_circle" Size="ButtonSize.Medium" ButtonStyle="ButtonStyle.Success" />
     </RadzenStack>
 </RadzenCard>
 
 <RadzenCard class="mt-3">
     <RadzenStack Orientation="Orientation.Horizontal">
-       <RadzenDataGrid @ref="dataGrid" Data="@rodMillDischargeList.OrderByDescending(x => x.Id)" TItem="RMD" AllowPaging="true" AllowSorting="true" PageSize="10" AllowColumnResize="true"
+       <RadzenDataGrid @ref="dataGrid" Data="@rodMillDischargeList.OrderByDescending(x => x.Id)" TItem="RMD" AllowPaging="true" AllowSorting="true" PageSize="8" AllowColumnResize="true"
                         AllowFiltering="true" FilterMode="FilterMode.Advanced" PagerHorizontalAlign="HorizontalAlign.Center" ColumnWidth="auto" IsLoading=@isLoading
                         ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
             <Columns>
 @*                 <RadzenDataGridColumn Property="@nameof(RMD.Id)" HeaderCssClass="rz-secondary-light" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" Width="100px" />
- *@             <RadzenDataGridColumn Property="@nameof(RMD.DateFrom)" Title="Date From" FormatString="{0:d}" Frozen="true" />
-                <RadzenDataGridColumn Property="@nameof(RMD.DateTo)" Title="Date To" FormatString="{0:d}" Frozen="true" />
-                <RadzenDataGridColumn Property="@nameof(RMD.Tonnes)" Title="DMT" Frozen="true" />
-                <RadzenDataGridColumn Property="@nameof(RMD.Cu)" Title="Cu %" Frozen="true" />
-                <RadzenDataGridColumn Property="@nameof(RMD.TCu)" Title="TCu %" Frozen="true" FormatString="{0:0.##}" />
-                <RadzenDataGridColumn Property="@nameof(RMD.Co)" Title="Co %" Frozen="true" />
-                <RadzenDataGridColumn Property="@nameof(RMD.TCo)" Title="TCo %" Frozen="true" FormatString="{0:0.##}" />
-                @* <RadzenDataGridColumn Property="@nameof(RMD.EnteredOn)" Title="Logged On" Frozen="true" /> *@
+ *@             <RadzenDataGridColumn Property="@nameof(RMD.DateFrom)" Title="Date From" FormatString="{0:d}" />
+                <RadzenDataGridColumn Property="@nameof(RMD.DateTo)" Title="Date To" Frozen="true" FormatString="{0:d}" />
+                <RadzenDataGridColumn Property="@nameof(RMD.Tonnes)" Title="Dry Tonnes" Frozen="true" FormatString="{0:0,##}" />
+                <RadzenDataGridColumn Property="@nameof(RMD.Cu)" Title="Cu" Frozen="true" FormatString="{0:0,##}" />
+                <RadzenDataGridColumn Property="@nameof(RMD.Co)" Title="Co" Frozen="true" FormatString="{0:0,##}" />
+                <RadzenDataGridColumn Property="@nameof(RMD.TCu)" Title="TCu %" Frozen="true"/>
+                <RadzenDataGridColumn Property="@nameof(RMD.TCo)" Title="TCo %" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(RMD.EnteredBy)" Title="Entered By" Frozen="true" />
             </Columns>
         </RadzenDataGrid>
     </RadzenStack>

@@ -55,7 +55,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[StopeDevelopment]",
+         "Name": "[dbo].[StopeDefinition]",
          "ObjectType": 0
       },
       {

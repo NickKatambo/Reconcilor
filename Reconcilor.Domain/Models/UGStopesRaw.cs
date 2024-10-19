@@ -69,5 +69,5 @@ public partial class UGStopesRaw
 
     [ForeignKey("StopeId")]
     [InverseProperty("UGStopesRaws")]
-    public virtual StopeDevelopment Stope { get; set; }
+    public virtual StopeDefinition Stope { get; set; }
 }

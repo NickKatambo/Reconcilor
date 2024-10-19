@@ -7,7 +7,7 @@
         {
 			try
 			{
-                return (gradeValue / tonnes) * 100;
+                return Math.Round((gradeValue / 100) * tonnes, 2);
             }
             catch(DivideByZeroException)
             {
@@ -23,7 +23,7 @@
         {
             try
             {
-                return (WetTonnes -(WetTonnes - (Moisture / 100) * WetTonnes));
+                return (WetTonnes - ((Moisture / 100) * WetTonnes));
             }
             catch (DivideByZeroException)
             {

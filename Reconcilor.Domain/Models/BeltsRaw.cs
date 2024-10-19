@@ -14,6 +14,9 @@ public partial class BeltsRaw
     [Key]
     public int Id { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime ProductionDate { get; set; }
+
     public int ShaftId { get; set; }
 
     public int ShiftId { get; set; }

@@ -20,5 +20,5 @@ public partial class Mining
     public string Description { get; set; }
 
     [InverseProperty("Mining")]
-    public virtual ICollection<StopeDevelopment> StopeDevelopments { get; set; } = new List<StopeDevelopment>();
+    public virtual ICollection<StopeDefinition> StopeDefinitions { get; set; } = new List<StopeDefinition>();
 }

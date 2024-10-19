@@ -27,6 +27,7 @@ namespace Reconcilor.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            beltsRaw.ProductionDate = DateTime.Now;
             await LoadDataAsync();
         }
 
@@ -85,6 +86,7 @@ namespace Reconcilor.Components.Pages
         {
             try
             {
+                isLoading = true;
                 var totalTonnes = ReconUtility.CalculateDryTonnes(beltsRaw.WetTonnes ?? 0, beltsRaw.Moisture ?? 0);
                 beltsRaw.Id = 0;
                 beltsRaw.EnteredOn = DateTime.Now;
@@ -98,7 +100,8 @@ namespace Reconcilor.Components.Pages
                 if (result is not null && result.Result is not null)
                 {
                     AlertMessage("Belts results saved successfully", NotificationSeverity.Success);
-                    beltsRaw = new();
+                    beltsRaw = new()
+                    { ProductionDate = DateTime.Now };
                     await LoadDataAsync();
                     await dataGrid.Reload();
                 }
@@ -111,6 +114,10 @@ namespace Reconcilor.Components.Pages
             catch (Exception ex)
             {
                 AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+            }
+            finally
+            {
+                isLoading = false;
             }
         }
     }

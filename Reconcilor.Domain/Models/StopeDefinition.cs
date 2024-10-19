@@ -8,11 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Reconcilor.Domain.Models;
 
-[Table("StopeDevelopment")]
-public partial class StopeDevelopment
+[Table("StopeDefinition")]
+public partial class StopeDefinition
 {
     [Key]
-    public int StopeId { get; set; }
+    public int Id { get; set; }
+
+    [StringLength(20)]
+    [Unicode(false)]
+    public string StopeID { get; set; }
 
     public int ShaftId { get; set; }
 
@@ -31,22 +35,22 @@ public partial class StopeDevelopment
     public string Comment { get; set; }
 
     [ForeignKey("LevelId")]
-    [InverseProperty("StopeDevelopments")]
+    [InverseProperty("StopeDefinitions")]
     public virtual Level Level { get; set; }
 
     [ForeignKey("MineModelId")]
-    [InverseProperty("StopeDevelopments")]
+    [InverseProperty("StopeDefinitions")]
     public virtual MineModel MineModel { get; set; }
 
     [ForeignKey("MiningId")]
-    [InverseProperty("StopeDevelopments")]
+    [InverseProperty("StopeDefinitions")]
     public virtual Mining Mining { get; set; }
 
     [ForeignKey("ShaftId")]
-    [InverseProperty("StopeDevelopments")]
+    [InverseProperty("StopeDefinitions")]
     public virtual Shaft Shaft { get; set; }
 
-    [InverseProperty("Stope")]
+    [InverseProperty("StopeDef")]
     public virtual ICollection<UGStopeDetail> UGStopeDetails { get; set; } = new List<UGStopeDetail>();
 
     [InverseProperty("Stope")]

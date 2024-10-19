@@ -14,11 +14,7 @@ public partial class UGStopeDetail
     [Key]
     public int Id { get; set; }
 
-    public int ShaftId { get; set; }
-
-    public int StopeId { get; set; }
-
-    public int ModelId { get; set; }
+    public int StopeDefId { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime DateEntered { get; set; }
@@ -38,10 +34,6 @@ public partial class UGStopeDetail
     [Column(TypeName = "decimal(18, 2)")]
     public decimal Co { get; set; }
 
-    [StringLength(250)]
-    [Unicode(false)]
-    public string FileLocation { get; set; }
-
     [StringLength(50)]
     [Unicode(false)]
     public string EnteredBy { get; set; }
@@ -49,15 +41,7 @@ public partial class UGStopeDetail
     [Column(TypeName = "datetime")]
     public DateTime? EnteredOn { get; set; }
 
-    [ForeignKey("ModelId")]
+    [ForeignKey("StopeDefId")]
     [InverseProperty("UGStopeDetails")]
-    public virtual MineModel Model { get; set; }
-
-    [ForeignKey("ShaftId")]
-    [InverseProperty("UGStopeDetails")]
-    public virtual Shaft Shaft { get; set; }
-
-    [ForeignKey("StopeId")]
-    [InverseProperty("UGStopeDetails")]
-    public virtual StopeDevelopment Stope { get; set; }
+    public virtual StopeDefinition StopeDef { get; set; }
 }

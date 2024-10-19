@@ -1,0 +1,170 @@
+﻿@page "/stoperaw"
+@using Reconcilor.Application.Interfaces
+@using Reconcilor.Application.Services
+
+<PageTitle>Underground Stopes Raw</PageTitle>
+
+<RadzenAlert Variant="Variant.Filled" Icon="assignment_returned" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Underground Stopes Raw
+</RadzenAlert>
+<RadzenCard class="rz-mx-auto rz-base-lighter">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Shaft" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stopeRaw.ShaftId Data=@shaftList Placeholder="Choose Shaft"
+                                    TextProperty="@nameof(Shaft.ShaftName)" ValueProperty="@nameof(Shaft.ShaftId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Level" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stopeRaw.LevelId Data=@levelList Placeholder="Choose Level" Change="@((args) => OnLevelChange((int) args))"
+                                    TextProperty="@nameof(Level.LevelDescription)" ValueProperty="@nameof(Level.LevelId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Stope/Dev" Variant="@variant" Component="DropDownDataGridColumns">
+                    <RadzenDropDownDataGrid @bind-Value=@stopeRaw.StopeId Data=@StopeDefinitions Placeholder="Choose One" TextProperty="@nameof(StopeDefinition.StopeID)" ValueProperty="@nameof(StopeDefinition.Id)"
+                                            AllowColumnResize="true" AllowFilteringByAllStringColumns="true" Name="DropDownDataGridColumns">
+                        <Columns>
+                            <RadzenDropDownDataGridColumn Property="@nameof(StopeDefinition.StopeID)" Title="Stope ID" Width="120px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.Shaft.ShaftName" SortProperty="@nameof(StopeDefinition.ShaftId)" Title="Shaft" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.Level.LevelDescription" SortProperty="@nameof(StopeDefinition.LevelId)" Title="Level" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.Mining.Description" SortProperty="@nameof(StopeDefinition.MiningId)" Title="Activity" Width="150px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.MineModel.ModelDescription" SortProperty="@nameof(StopeDefinition.MineModelId)" Title="Model" Width="150px" />
+                        </Columns>
+                    </RadzenDropDownDataGrid>
+                </RadzenFormField>
+                <RadzenFormField Text="Shift" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stopeRaw.ShiftId Data=@shiftList Placeholder="Choose Shift"
+                                    TextProperty="@nameof(Shift.ShiftName)" ValueProperty="@nameof(Shift.Id)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Production Date" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stopeRaw.DateEntered" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Tonnes" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stopeRaw.Tonnes" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="TCu (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stopeRaw.TCu" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="TCo (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stopeRaw.TCo" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="Ticket No" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stopeRaw.TicketNo" Placeholder="Enter ticket number here" />
+                </RadzenFormField>
+                <RadzenStack>
+                    <RadzenButton class="mt-2" ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenDataGrid @ref="dataGrid" Data="@StopeRawList.OrderByDescending(x => x.Id)" TItem="UGStopesRaw" AllowPaging="true" AllowSorting="true" PageSize="6" AllowColumnResize="true"
+                        AllowFiltering="true" FilterMode="FilterMode.Advanced" PagerHorizontalAlign="HorizontalAlign.Center" ColumnWidth="auto" IsLoading=@isLoading
+                        ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="ProductionDate" Title="Date" FormatString="{0:d}" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Title="Shift" Sortable="true" Property="Shift.ShiftName" Frozen="true">
+                    <Template>
+                        @context.Shift.ShiftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="BeltsRaw" Title="Shaft" Sortable="true" Property="Shaft.ShaftName" Frozen="true">
+                    <Template>
+                        @context.Shaft.ShaftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="WetTonnes" Title="Wet Tonnes" FormatString="{0:0,##.00}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Tonnes" Title="Dry Tonnes" FormatString="{0:0,##.00}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="TCu" Title="TCu %" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="TCo" Title="TCo %" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Cu" Title="Cu" Filterable="false" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Co" Title="Co" Filterable="false" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="Moisture" Title="Moisture %" FormatString="{0:0.##}" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="SampleId" Title="Sample #" Frozen="true" />
+                <RadzenDataGridColumn TItem="BeltsRaw" Property="EnteredBy" Title="Entered By" Frozen="true" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected NotificationService NotificationService { get; set; }
+    [Inject] protected StockPileService stockPileService { get; set; } = default!;
+
+    protected RadzenDataGrid<UGStopesRaw> dataGrid;
+    protected Variant variant = Variant.Outlined;
+    protected UGStopesRaw stopeRaw = new() { DateEntered = DateTime.Now };
+    protected List<Shaft> shaftList;
+    protected List<Shift> shiftList;
+    protected List<Level> levelList;
+    protected IEnumerable<UGStopesRaw> StopeRawList = Enumerable.Empty<UGStopesRaw>();
+    IEnumerable<StopeDefinition> StopeDefinitions;
+    protected bool isLoading = false;
+    protected DateTime? dateFilter;
+
+    private int selectedShaftId;
+    private int selectedLevelId;
+
+    private async Task OnShaftChange(int shaftId)
+    {
+        selectedShaftId = shaftId;
+        var query = await stockPileService.GetLevelsAsync();
+        levelList = query.Where(c => c.ShaftId == selectedShaftId).ToList();
+    }
+
+    async Task SubmitData()
+    {
+
+    }
+
+    private void OnLevelChange(int levelId)
+    {
+
+    }
+
+    protected async Task LoadDataAsync()
+    {
+        try
+        {
+            isLoading = true;
+            shaftList = await stockPileService.GetShaftAsync();
+            levelList = await stockPileService.GetLevelsAsync();
+            StopeDefinitions = await stockPileService.GetStopeDefinationsync();
+        }
+        catch (Exception ex)
+        {
+            AlertMessage("Opening tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+            throw;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    void ShowNotification(NotificationMessage message) => NotificationService.Notify(message);
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+}

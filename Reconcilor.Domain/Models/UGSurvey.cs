@@ -68,5 +68,5 @@ public partial class UGSurvey
 
     [ForeignKey("StopeId")]
     [InverseProperty("UGSurveys")]
-    public virtual StopeDevelopment Stope { get; set; }
+    public virtual StopeDefinition Stope { get; set; }
 }

@@ -19,10 +19,7 @@ public partial class MineModel
     public string ModelDescription { get; set; }
 
     [InverseProperty("MineModel")]
-    public virtual ICollection<StopeDevelopment> StopeDevelopments { get; set; } = new List<StopeDevelopment>();
-
-    [InverseProperty("Model")]
-    public virtual ICollection<UGStopeDetail> UGStopeDetails { get; set; } = new List<UGStopeDetail>();
+    public virtual ICollection<StopeDefinition> StopeDefinitions { get; set; } = new List<StopeDefinition>();
 
     [InverseProperty("Model")]
     public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();

@@ -26,8 +26,8 @@
     <RadzenSidebar @bind-Expanded="@sidebarExpanded">
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
-            <RadzenPanelMenuItem Text="Dashboard" Icon="donut_small" Path="dashboard" />
-             <RadzenPanelMenuItem Text="Data" Icon="note_add">
+            <RadzenPanelMenuItem Text="Dashboard" Icon="dashboard" Path="dashboard" />
+            <RadzenPanelMenuItem Text="SURFACE" Icon="donut_small" IconColor="@Colors.WarningDark">
                 <RadzenPanelMenuItem Text="RMD" title="Rod Mill Discharge" Path="rmd" Icon="assignment_returned"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Belts Raw" title="Belts Raw" Path="beltraw" Icon="cached"></RadzenPanelMenuItem>
 @*                 <RadzenPanelMenuItem Text="TextArea" Path="textarea" Icon="description"></RadzenPanelMenuItem>
@@ -35,23 +35,27 @@
                 <RadzenPanelMenuItem Text="Numeric" Path="numeric" Icon="aspect_ratio"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="DatePicker" Path="datepicker" Icon="date_range"></RadzenPanelMenuItem> *@
             </RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Text="Stock Piles" Icon="get_app">
+            <RadzenPanelMenuItem Text="UNDERGROUND" Icon="assignment_returned" IconColor="@Colors.WarningDark">
                 <RadzenPanelMenuItem Text="Stock Piles" Path="stockpiles" Icon="change_history"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="Trends" Path="stocktrend" Icon="assessment"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Stopes Details" Path="stopedetails" Icon="all_out"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Stopes Raw" Path="stoperaw" Icon="assignment_return"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Stock Trends" Path="stocktrend" Icon="assessment"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Text="Survey" Icon="lightbulb">
-                <RadzenPanelMenuItem Text="UG Survey" Path="stockpiles" Icon="change_history"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="Trends" Path="stocktrend" Icon="donut_small"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="SURVEY" Icon="lightbulb" IconColor="@Colors.WarningDark">
+                <RadzenPanelMenuItem Text="UG Survey" Path="" Icon="change_history"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Trends" Path="" Icon="donut_small"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
-            <RadzenPanelMenuItem Text="Settings" Icon="build">
+            <RadzenPanelMenuItem Text="SYSTEM SETUP" Icon="build" IconColor="@Colors.WarningDark">
                 <RadzenPanelMenuItem Text="Shafts" Path="shafts" Icon="dns"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Bin" Path="bins" Icon="add_shopping_cart"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Model" Path="minemodel" Icon="open_with"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="Tasks" Path="dropdown-datagrid" Icon="receipt"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="System Health" Path="listbox" Icon="view_list"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Levels" Path="level" Icon="list"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Mining" Path="activity" Icon="gavel"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Stope Definition" Path="stopedefinition" Icon="receipt"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="System Health" Path="/" Icon="hourglass_full" IconColor="@Colors.SuccessDarker"></RadzenPanelMenuItem>
 @*                 <RadzenPanelMenuItem Text="Auth Required" Path="auth" Icon="account_circle"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Register" Path="Account/Register" Icon="account_circle"></RadzenPanelMenuItem> *@
-                <RadzenPanelMenuItem Text="Login" Path="Account/Login" Icon="account_circle"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Profile" Path="Account/Login" Icon="account_circle"></RadzenPanelMenuItem>
             </RadzenPanelMenuItem>
         </RadzenPanelMenu>
 @*         <div class="rz-p-4">
@@ -59,7 +63,7 @@
         </div> *@
     </RadzenSidebar>
     <RadzenBody>
-        <div class="rz-p-4 rz-base-lighter">
+        <div class="rz-p-1 rz-base-lighter">
             @Body
         </div>
     </RadzenBody>

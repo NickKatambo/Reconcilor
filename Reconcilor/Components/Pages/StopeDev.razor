@@ -1,0 +1,226 @@
+﻿@page "/stopedefinition"
+@using Reconcilor.Application.Interfaces
+@using Reconcilor.Application.Services
+
+<RadzenAlert Variant="Variant.Filled" Icon="list" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Stope Definition
+</RadzenAlert>
+
+<RadzenCard class="rz-mx-auto rz-base-lighter">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Shaft" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stopesDef.ShaftId Data=@shaftList Placeholder="Choose Shaft"
+                                    Change="@((args) => OnShaftChange((int)args))" TextProperty="@nameof(Shaft.ShaftName)" ValueProperty="@nameof(Shaft.ShaftId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Level" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stopesDef.LevelId Data=@levelList Placeholder="Choose Level" Change="@((args) => OnLevelChange((int) args))"
+                                    TextProperty="@nameof(Level.LevelDescription)" ValueProperty="@nameof(Level.LevelId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Crosscut" Variant="@variant" title="Crosscut">
+                    <RadzenTextBox @bind-Value="@stopesDef.Crosscut" Placeholder="Enter level name here" Style="width: 100%;" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Mining Activity" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stopesDef.MiningId Data=@miningList Placeholder="Choose Mining"
+                                    TextProperty="@nameof(Mining.Description)" ValueProperty="@nameof(Mining.Id)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Mine Model" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stopesDef.MineModelId Data=@MineModelList Placeholder="Choose Level"
+                                    TextProperty="@nameof(MineModel.ModelDescription)" ValueProperty="@nameof(MineModel.ModelId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenStack>
+                    <RadzenButton class="mt-1" ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+        <RadzenDataGrid @ref="dataGrid" Data="@stopeDefinitionList.OrderByDescending(x => x.Id)" TItem="StopeDefinition" AllowPaging="true" AllowSorting="true" PageSize="10" AllowColumnResize="true"
+                        AllowFiltering="true" FilterMode="FilterMode.Advanced" PagerHorizontalAlign="HorizontalAlign.Center" ColumnWidth="auto" IsLoading=@isLoading
+                        ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="StopeDefinition" Property="StopeID" Title="Stope ID" />
+                <RadzenDataGridColumn TItem="StopeDefinition" Title="Shaft" Sortable="true" Property="Shaft.ShaftName" Frozen="true">
+                    <Template>
+                        @context.Shaft.ShaftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="StopeDefinition" Title="Level" Sortable="true" Property="Level.LevelDescription" Frozen="true">
+                    <Template>
+                        @context.Level.LevelDescription
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="StopeDefinition" Title="Mining Activity" Sortable="true" Property="Mining.Description" Frozen="true">
+                    <Template>
+                        @context.Mining.Description
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="StopeDefinition" Title="Model" Sortable="true" Property="MineModel.ModelDescription" Frozen="true">
+                    <Template>
+                        @context.MineModel.ModelDescription
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="StopeDefinition" Property="Crosscut" Title="Crosscut" Filterable="true" Frozen="true" />
+                @* <RadzenDataGridColumn TItem="StopeDevelopment" Property="Comment" Title="Comment" Filterable="true" Frozen="true" /> *@
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected NotificationService NotificationService { get; set; }
+    [Inject] protected StockPileService stockPileService { get; set; } = default!;
+
+    public StopeDefinition stopesDef = new();
+    private Variant variant = Variant.Outlined;
+    private IEnumerable<StopeDefinition> stopeDefinitionList = Enumerable.Empty<StopeDefinition>();
+    private RadzenDataGrid<StopeDefinition> dataGrid;
+    protected int count;
+    protected List<Shaft> shaftList;
+    protected List<Level> levelList;
+    protected List<Mining> miningList;
+    protected List<MineModel> MineModelList;
+    protected bool isLoading = false;
+
+    private int selectedShaftId;
+    private int selectedLevelId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task OnShaftChange(int shaftId)
+    {
+        selectedShaftId = shaftId;
+        var query = await stockPileService.GetLevelsAsync();
+        levelList = query.Where(c => c.ShaftId == selectedShaftId).ToList();
+    }
+
+    private void OnLevelChange(int levelId)
+    {
+        if(levelId > 0)
+        {
+            stopesDef.StopeID = levelList.First(x => x.LevelId == levelId).LevelDescription ?? "NIL";
+        }
+        else
+        {
+            AlertMessage("Select Level from the list", NotificationSeverity.Warning);
+            return;
+        }
+    }
+
+    protected async Task LoadDataAsync()
+    {
+        try
+        {
+            isLoading = true;
+            shaftList = await stockPileService.GetShaftAsync();
+            levelList = await stockPileService.GetLevelsAsync();
+            miningList = await stockPileService.GetMiningAsync();
+            MineModelList = await stockPileService.GetMineModelAsync();
+            stopeDefinitionList = await stockPileService.GetStopeDefinationsync ();
+        }
+        catch (Exception ex)
+        {
+            AlertMessage("Opening tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+            throw;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    async Task SubmitData()
+    {
+        try
+        {
+            if (stopesDef.ShaftId == 0)
+            {
+                AlertMessage("Select Shaft from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (stopesDef.LevelId == 0)
+            {
+                AlertMessage("Select Level from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (string.IsNullOrEmpty(stopesDef.Crosscut))
+            {
+                AlertMessage("Crosscut is a required field", NotificationSeverity.Warning);
+                return;
+            }
+            if (stopesDef.MiningId == 0)
+            {
+                AlertMessage("Select Mining Activity from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (stopesDef.MineModelId == 0)
+            {
+                AlertMessage("Select Mining Model from the list", NotificationSeverity.Warning);
+                return;
+            }
+            else
+            {
+                try
+                {
+                    stopesDef.Id = 0;
+                    stopesDef.StopeID += $"_{stopesDef.Crosscut.Trim().ToUpper()}";
+                    var result = _repository.SaveDataAsync(stopesDef);
+                    if (result is not null && result.Result is not null)
+                    {
+                        AlertMessage("Stope development saved successfully", NotificationSeverity.Success);
+                        stopesDef = new();
+
+                        await LoadDataAsync();
+                        await dataGrid.Reload();
+                    }
+                    else
+                    {
+                        AlertMessage("Error while saving stope development", NotificationSeverity.Error);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+        }
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+}

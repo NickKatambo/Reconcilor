@@ -35,7 +35,7 @@ public partial class ReconcilorContext : DbContext
 
     public virtual DbSet<StockPile> StockPiles { get; set; }
 
-    public virtual DbSet<StopeDevelopment> StopeDevelopments { get; set; }
+    public virtual DbSet<StopeDefinition> StopeDefinitions { get; set; }
 
     public virtual DbSet<Surveyor> Surveyors { get; set; }
 
@@ -45,7 +45,6 @@ public partial class ReconcilorContext : DbContext
 
     public virtual DbSet<UGSurvey> UGSurveys { get; set; }
     public virtual DbSet<StockPileViewModel> StockPileViewModel { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BeltsRaw>(entity =>
@@ -57,6 +56,13 @@ public partial class ReconcilorContext : DbContext
             entity.HasOne(d => d.Shift).WithMany(p => p.BeltsRaws)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BeltsRaw_Shift1");
+        });
+
+        modelBuilder.Entity<Level>(entity =>
+        {
+            entity.HasOne(d => d.Shaft).WithMany(p => p.Levels)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Level_Shaft");
         });
 
         modelBuilder.Entity<Measure>(entity =>
@@ -71,21 +77,23 @@ public partial class ReconcilorContext : DbContext
                 .HasConstraintName("FK_StockPiles_Bin");
         });
 
-        modelBuilder.Entity<StopeDevelopment>(entity =>
+        modelBuilder.Entity<StopeDefinition>(entity =>
         {
-            entity.HasOne(d => d.Level).WithMany(p => p.StopeDevelopments)
+            entity.HasKey(e => e.Id).HasName("PK_StopeDevelopment");
+
+            entity.HasOne(d => d.Level).WithMany(p => p.StopeDefinitions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_StopeDevelopment_Level");
 
-            entity.HasOne(d => d.MineModel).WithMany(p => p.StopeDevelopments)
+            entity.HasOne(d => d.MineModel).WithMany(p => p.StopeDefinitions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_StopeDevelopment_MineModel");
 
-            entity.HasOne(d => d.Mining).WithMany(p => p.StopeDevelopments)
+            entity.HasOne(d => d.Mining).WithMany(p => p.StopeDefinitions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_StopeDevelopment_Mining");
 
-            entity.HasOne(d => d.Shaft).WithMany(p => p.StopeDevelopments)
+            entity.HasOne(d => d.Shaft).WithMany(p => p.StopeDefinitions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_StopeDevelopment_Shaft");
         });
@@ -94,15 +102,7 @@ public partial class ReconcilorContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_StopeDetail");
 
-            entity.HasOne(d => d.Model).WithMany(p => p.UGStopeDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UGStopeDetail_MineModel");
-
-            entity.HasOne(d => d.Shaft).WithMany(p => p.UGStopeDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UGStopeDetail_Shaft");
-
-            entity.HasOne(d => d.Stope).WithMany(p => p.UGStopeDetails)
+            entity.HasOne(d => d.StopeDef).WithMany(p => p.UGStopeDetails)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UGStopeDetail_StopeDevelopment");
         });

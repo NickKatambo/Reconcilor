@@ -1,0 +1,80 @@
+﻿@page "/activity"
+
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+
+<RadzenAlert Variant="Variant.Filled" Icon="open_with" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Mining Activity
+</RadzenAlert>
+
+<RadzenCard>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Activity Name" Variant="@variant" title="Activity Name">
+                    <RadzenTextBox @bind-Value="@miningModel.Description" Placeholder="Enter mining activity name here" Style="width: 100%;" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack class="mt-2" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal" Gap="0">
+        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" Data="@miningModelList" TItem="Mining"
+                        ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(miningModel.Description)" Title="Mining Activity"/>
+                <RadzenDataGridColumn Property="@nameof(miningModel.Id)" Title="Item" Frozen="true" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected NotificationService NotificationService { get; set; }
+
+    public Mining miningModel = new();
+    private Variant variant = Variant.Outlined;
+    private IEnumerable<Mining> miningModelList = Enumerable.Empty<Mining>();
+    private RadzenDataGrid<Mining> dataGrid;
+    protected int count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private void SubmitData()
+    {
+        
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+
+    private async Task LoadDataAsync()
+    {
+        miningModelList = await _repository.GetDataAsync<Mining>();
+        count = miningModelList.Count();
+    }
+}

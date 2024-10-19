@@ -3,60 +3,58 @@
 @using Reconcilor.Application.Interfaces
 @using Reconcilor.Application.Services
 @using Reconcilor.Domain.ViewModels
-
 @inject NotificationService NotificationService
+
 <PageTitle>Stock Piles</PageTitle>
 
 <RadzenAlert Variant="Variant.Filled" Icon="assignment_returned" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
     Stock Piles
 </RadzenAlert>
-<RadzenCard class="rz-my-12 rz-mx-auto rz-p-md-12 rz-base-lighter">
+<RadzenCard class="rz-mx-auto rz-base-lighter">
     <RadzenRow>
         <RadzenColumn Size="12" SizeSM="6">
             <RadzenStack>
-                <RadzenFormField Text="Stock Pile" Variant="@variant">
-                    <RadzenDropDown @bind-Value=@stockPile.StockPId Data=@_bins 
-                    TextProperty="@nameof(Bin.BinName)" ValueProperty="@nameof(Bin.StockPId)" Name="DropDownBindValue">
-                    </RadzenDropDown>
+                <RadzenFormField Text="Date From" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stockPile.DateFrom" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
                 </RadzenFormField>
-                <RadzenFormField Text="Opening Tonnes" Variant="@variant" >
+                <RadzenFormField Text="Opening Tonnes" Variant="@variant">
                     <RadzenNumeric @bind-Value="@stockPile.OpeningTonnes" Min="0" Max="1000000" />
                 </RadzenFormField>
-                <RadzenFormField Text="Date From" Variant="@variant">
-                    <RadzenDatePicker @bind-Value="@stockPile.DateFrom" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                <RadzenFormField Text="Stock Pile" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@stockPile.StockPId Data=@_bins Placeholder="Choose One"
+                                    TextProperty="@nameof(Bin.BinName)" ValueProperty="@nameof(Bin.StockPId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
                 </RadzenFormField>
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn Size="12" SizeSM="6">
             <RadzenStack>
-                <RadzenStack class="rz-p-6">
-                </RadzenStack>
+                <RadzenFormField Text="Date To" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stockPile.DateTo" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
                 <RadzenFormField Text="Closing Tonnes" Variant="@variant">
                     <RadzenNumeric @bind-Value="@stockPile.ClosingTonnes" Min="0" Max="1000000" />
                 </RadzenFormField>
-                <RadzenFormField Text="Date To" Variant="@variant">
-                    <RadzenDatePicker @bind-Value="@stockPile.DateTo" DateFormat="dd/MMM/yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
-                </RadzenFormField>
+                <RadzenStack class="rz-p-3">
+                    <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                </RadzenStack>
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal">
-        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
-    </RadzenStack>
 </RadzenCard>
 
-<RadzenCard class="rz-my-12 rz-mx-auto rz-p-md-12">
+<RadzenCard class="mt-3">
     <RadzenStack Orientation="Orientation.Horizontal" Gap="1px">
-        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="15"
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
                         AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                         Data="@stockPileList.OrderByDescending(x => x.Id)" ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or">
             <Columns>
-                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.BinName)" HeaderCssClass="rz-secondary-light" Title="Bin" Frozen="true" />
-                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.OpeningTonnes)" Title="Opening Tonnes" Frozen="true" FormatString="{0:0.##}" />
-                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.ClosingTonnes)" Title="Closing Tonnes" Frozen="true" FormatString="{0:0.##}" />
-                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.DateFrom)" Title="Date From" FormatString="{0:d}" Frozen="true" />
-                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.DateTo)" Title="Date To" FormatString="{0:d}" Frozen="true" />               
-                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.EnteredOn)" Title="Logged On" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.DateFrom)" Title="Date From" FormatString="{0:d}"/>
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.DateTo)" Title="Date To" FormatString="{0:d}" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.BinName)" HeaderCssClass="rz-secondary-dark" Title="Stock Pile/Bin" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.OpeningTonnes)" Title="Opening Tonnes" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.ClosingTonnes)" Title="Closing Tonnes" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn Property="@nameof(StockPileViewModel.EnteredBy)" Title="Entered By" Frozen="true" />
             </Columns>
         </RadzenDataGrid>
     </RadzenStack>
@@ -68,7 +66,7 @@
     [Inject] private IReconcilorRepository _repository { get; set; } = default!;
     [Inject] protected DialogService DialogService { get; set; } = default!;
     [Inject] protected StockPileService stockPileService { get; set; } = default!;
-
+    protected bool isLoading = false;
     IEnumerable<Bin> _bins;
 
     protected int count;
@@ -77,9 +75,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-        stockPile.DateFrom = DateTime.Now;
-        stockPile.DateTo = DateTime.Now;
-        await LoadDataAsync();
+        try
+        {
+            isLoading = true;
+            stockPile.DateFrom = DateTime.Now;
+            stockPile.DateTo = DateTime.Now;
+            await LoadDataAsync();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private async Task LoadDataAsync()
@@ -97,11 +107,6 @@
 
     async Task SubmitData()
     {
-        if (stockPile.StockPId <= 0)
-        {
-            AlertMessage("Select stock pile or bin from the list", NotificationSeverity.Warning);
-            return;
-        }
         if (stockPile.OpeningTonnes < 0)
         {
             AlertMessage("Opening tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
@@ -110,6 +115,11 @@
         if (stockPile.ClosingTonnes < 0)
         {
             AlertMessage("Closing tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+            return;
+        }
+        if (stockPile.StockPId <= 0)
+        {
+            AlertMessage("Select stock pile or bin from the list", NotificationSeverity.Warning);
             return;
         }
         else
