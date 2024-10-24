@@ -54,4 +54,8 @@ public partial class UGStopesRaw
     [ForeignKey("ShiftId")]
     [InverseProperty("UGStopesRaws")]
     public virtual Shift Shift { get; set; }
+
+    [ForeignKey("StopeId")]
+    [InverseProperty("UGStopesRaws")]
+    public virtual StopeDefinition Stope { get; set; }
 }

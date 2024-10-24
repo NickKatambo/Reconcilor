@@ -37,7 +37,7 @@
                     <RadzenTextBox @bind-Value="@stopeRaw.TicketNo" Placeholder="Enter ticket number here" />
                 </RadzenFormField>
                 <RadzenStack>
-                    <RadzenButton class="mt-1" ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                    <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
                 </RadzenStack>
             </RadzenStack>
         </RadzenColumn>
@@ -62,30 +62,38 @@
 
 <RadzenCard class="mt-3">
     <RadzenStack Orientation="Orientation.Horizontal">
-        <RadzenDataGrid @ref="dataGrid" Data="@StopeRawList.OrderByDescending(x => x.Id)" TItem="UGStopesRaw" AllowPaging="true" AllowSorting="true" PageSize="6" AllowColumnResize="true"
+        <RadzenDataGrid @ref="dataGrid" Data="@StopeRawList.OrderByDescending(x => x.DateEntered)" TItem="UGStopesRaw" AllowPaging="true" AllowSorting="true" PageSize="6" AllowColumnResize="true"
                         AllowFiltering="true" FilterMode="FilterMode.Advanced" PagerHorizontalAlign="HorizontalAlign.Center" ColumnWidth="auto" IsLoading=@isLoading
                         ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
             <Columns>
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="ProductionDate" Title="Date" FormatString="{0:d}" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Title="Shift" Sortable="true" Property="Shift.ShiftName" Frozen="true">
+                <RadzenDataGridColumn TItem="UGStopesRaw" Title="Shaft" Sortable="true" Property="Stope.Shaft.ShaftName" >
+                    <Template>
+                        @context.Stope.Shaft.ShaftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="DateEntered" Title="Date" FormatString="{0:g}" Frozen="true" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Title="Level" Sortable="true" Property="Stope.Level.LevelDescription" Frozen="true">
+                    <Template>
+                        @context.Stope.Level.LevelDescription
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UGStopesRaw" Title="Shift" Sortable="true" Property="Shift.ShiftName" Frozen="true">
                     <Template>
                         @context.Shift.ShiftName
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="BeltsRaw" Title="Shaft" Sortable="true" Property="Shaft.ShaftName" Frozen="true">
+                <RadzenDataGridColumn TItem="UGStopesRaw" Title="Stope ID" Sortable="true" Property="Stope.StopeID" Frozen="true">
                     <Template>
-                        @context.Shaft.ShaftName
+                        @context.Stope.StopeID
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="WetTonnes" Title="Wet Tonnes" FormatString="{0:0,##.00}" Filterable="false" Frozen="true" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="Tonnes" Title="Dry Tonnes" FormatString="{0:0,##.00}" Filterable="false" Frozen="true" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="TCu" Title="TCu %" Filterable="false" Frozen="true" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="TCo" Title="TCo %" Filterable="false" Frozen="true" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="Cu" Title="Cu" Filterable="false" Frozen="true" FormatString="{0:0,##.00}" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="Co" Title="Co" Filterable="false" Frozen="true" FormatString="{0:0,##.00}" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="Moisture" Title="Moisture %" FormatString="{0:0.##}" Frozen="true" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="SampleId" Title="Sample #" Frozen="true" />
-                <RadzenDataGridColumn TItem="BeltsRaw" Property="EnteredBy" Title="Entered By" Frozen="true" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="TicketNo" Title="Ticket No" Frozen="true" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="Tonnes" Title="Tonnes" FormatString="{0:0,##.00}" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="TCu" Title="TCu %" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="TCo" Title="TCo %" Filterable="false" Frozen="true" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="Cu" Title="Cu" Filterable="false" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="Co" Title="Co" Filterable="false" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn TItem="UGStopesRaw" Property="Comment" Title="Comment" Frozen="true" />
             </Columns>
         </RadzenDataGrid>
     </RadzenStack>
@@ -199,7 +207,8 @@
         {
             isLoading = true;
             shiftList = await stockPileService.GetShiftAsync();
-            StopeDefinitions = await stockPileService.GetStopeDefinationsync();
+            StopeDefinitions = await stockPileService.GetStopeDefinationAsync();
+            StopeRawList = await stockPileService.GetStopeRawAsync();
         }
         catch (Exception ex)
         {

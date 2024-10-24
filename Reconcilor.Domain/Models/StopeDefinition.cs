@@ -76,5 +76,8 @@ public partial class StopeDefinition
     public virtual Shaft Shaft { get; set; }
 
     [InverseProperty("Stope")]
+    public virtual ICollection<UGStopesRaw> UGStopesRaws { get; set; } = new List<UGStopesRaw>();
+
+    [InverseProperty("Stope")]
     public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();
 }

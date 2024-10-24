@@ -30,6 +30,9 @@
                 <RadzenFormField Text="Wet Tonnes" Variant="@variant">
                     <RadzenNumeric @bind-Value="@beltsRaw.WetTonnes" Min="0" Max="1000000" />
                 </RadzenFormField>
+                <RadzenStack>
+                    <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                </RadzenStack>
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn Size="12" SizeSM="6">
@@ -49,9 +52,6 @@
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
-    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal">
-        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
-    </RadzenStack>
 </RadzenCard>
 
 <RadzenCard class="mt-3">

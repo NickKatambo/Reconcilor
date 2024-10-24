@@ -65,7 +65,19 @@ namespace Reconcilor.Application.Services
         //                .ToListAsync();
         //}
 
-        public async Task<List<StopeDefinition>> GetStopeDefinationsync()
+        public async Task<List<UGStopesRaw>> GetStopeRawAsync()
+        {
+            return await _reconcilorContext.UGStopesRaws
+                .Include(s => s.Stope)
+                .Include(x => x.Shift)
+                .Include(l => l.Stope.Shaft)
+                .Include(l => l.Stope.Level)
+                .Include(l => l.Stope.Mining)
+                .Include(l => l.Stope.MineModel)
+                .ToListAsync();
+        }
+
+        public async Task<List<StopeDefinition>> GetStopeDefinationAsync()
         {
             return await _reconcilorContext.StopeDefinitions
                         .Include(s => s.Shaft)
