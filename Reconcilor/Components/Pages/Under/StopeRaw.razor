@@ -1,4 +1,5 @@
 ﻿@page "/stoperaw"
+@using Reconcilor.Application
 @using Reconcilor.Application.Interfaces
 @using Reconcilor.Application.Services
 
@@ -11,23 +12,14 @@
     <RadzenRow>
         <RadzenColumn Size="12" SizeSM="6">
             <RadzenStack>
-                <RadzenFormField Text="Shaft" Variant="@variant">
-                    <RadzenDropDown @bind-Value=@stopeRaw.ShaftId Data=@shaftList Placeholder="Choose Shaft"
-                                    TextProperty="@nameof(Shaft.ShaftName)" ValueProperty="@nameof(Shaft.ShaftId)" Name="DropDownBindValue">
-                    </RadzenDropDown>
-                </RadzenFormField>
-                <RadzenFormField Text="Level" Variant="@variant">
-                    <RadzenDropDown @bind-Value=@stopeRaw.LevelId Data=@levelList Placeholder="Choose Level" Change="@((args) => OnLevelChange((int) args))"
-                                    TextProperty="@nameof(Level.LevelDescription)" ValueProperty="@nameof(Level.LevelId)" Name="DropDownBindValue">
-                    </RadzenDropDown>
-                </RadzenFormField>
                 <RadzenFormField Text="Stope/Dev" Variant="@variant" Component="DropDownDataGridColumns">
-                    <RadzenDropDownDataGrid @bind-Value=@stopeRaw.StopeId Data=@StopeDefinitions Placeholder="Choose One" TextProperty="@nameof(StopeDefinition.StopeID)" ValueProperty="@nameof(StopeDefinition.Id)"
+                    <RadzenDropDownDataGrid @bind-Value=@stopeRaw.StopeId Data=@StopeDefinitions Placeholder="Choose One" TextProperty="@nameof(StopeDefinition.StopeID)" 
+                    ValueProperty="@nameof(StopeDefinition.Id)"
                                             AllowColumnResize="true" AllowFilteringByAllStringColumns="true" Name="DropDownDataGridColumns">
                         <Columns>
-                            <RadzenDropDownDataGridColumn Property="@nameof(StopeDefinition.StopeID)" Title="Stope ID" Width="120px" />
                             <RadzenDropDownDataGridColumn Property="StopeDefinition.Shaft.ShaftName" SortProperty="@nameof(StopeDefinition.ShaftId)" Title="Shaft" Width="100px" />
                             <RadzenDropDownDataGridColumn Property="StopeDefinition.Level.LevelDescription" SortProperty="@nameof(StopeDefinition.LevelId)" Title="Level" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="@nameof(StopeDefinition.StopeID)" Title="Stope ID" Width="120px" />
                             <RadzenDropDownDataGridColumn Property="StopeDefinition.Mining.Description" SortProperty="@nameof(StopeDefinition.MiningId)" Title="Activity" Width="150px" />
                             <RadzenDropDownDataGridColumn Property="StopeDefinition.MineModel.ModelDescription" SortProperty="@nameof(StopeDefinition.MineModelId)" Title="Model" Width="150px" />
                         </Columns>
@@ -41,7 +33,12 @@
                 <RadzenFormField Text="Production Date" Variant="@variant">
                     <RadzenDatePicker @bind-Value="@stopeRaw.DateEntered" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
                 </RadzenFormField>
-
+                <RadzenFormField Text="Ticket No" Variant="@variant">
+                    <RadzenTextBox @bind-Value="@stopeRaw.TicketNo" Placeholder="Enter ticket number here" />
+                </RadzenFormField>
+                <RadzenStack>
+                    <RadzenButton class="mt-1" ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                </RadzenStack>
             </RadzenStack>
         </RadzenColumn>
         <RadzenColumn Size="12" SizeSM="6">
@@ -55,12 +52,9 @@
                 <RadzenFormField Text="TCo (%)" Variant="@variant">
                     <RadzenNumeric @bind-Value="@stopeRaw.TCo" Min="0" Max="1000000" />
                 </RadzenFormField>
-                <RadzenFormField Text="Ticket No" Variant="@variant">
-                    <RadzenNumeric @bind-Value="@stopeRaw.TicketNo" Placeholder="Enter ticket number here" />
+                <RadzenFormField Text="Comment" Variant="@variant">
+                    <RadzenTextBox @bind-Value="@stopeRaw.Comment" Placeholder="Enter comment here" />
                 </RadzenFormField>
-                <RadzenStack>
-                    <RadzenButton class="mt-2" ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
-                </RadzenStack>
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
@@ -107,9 +101,7 @@
     protected RadzenDataGrid<UGStopesRaw> dataGrid;
     protected Variant variant = Variant.Outlined;
     protected UGStopesRaw stopeRaw = new() { DateEntered = DateTime.Now };
-    protected List<Shaft> shaftList;
     protected List<Shift> shiftList;
-    protected List<Level> levelList;
     protected IEnumerable<UGStopesRaw> StopeRawList = Enumerable.Empty<UGStopesRaw>();
     IEnumerable<StopeDefinition> StopeDefinitions;
     protected bool isLoading = false;
@@ -122,12 +114,78 @@
     {
         selectedShaftId = shaftId;
         var query = await stockPileService.GetLevelsAsync();
-        levelList = query.Where(c => c.ShaftId == selectedShaftId).ToList();
     }
 
     async Task SubmitData()
     {
+        try
+        {
+            if (stopeRaw.StopeId == 0)
+            {
+                AlertMessage("Select Shaft/Level/Stope/Dev from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (stopeRaw.ShiftId == 0)
+            {
+                AlertMessage("Select Shift from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (string.IsNullOrEmpty(stopeRaw.TicketNo))
+            {
+                AlertMessage("Ticket number is a required field", NotificationSeverity.Warning);
+                return;
+            }
+            else
+            {
+                try
+                {
+                    stopeRaw.Id = 0;
+                    stopeRaw.EnteredOn = DateTime.Now;
+                    stopeRaw.EnteredBy = "admin";
+                    stopeRaw.Co = ReconUtility.CalculateTotalGrade(stopeRaw.TCo, stopeRaw.Tonnes);
+                    stopeRaw.Cu = ReconUtility.CalculateTotalGrade(stopeRaw.TCu, stopeRaw.Tonnes);
 
+                    var result = _repository.SaveDataAsync(stopeRaw);
+                    if (result is not null && result.Result is not null)
+                    {
+                        AlertMessage("Stope Raw saved successfully", NotificationSeverity.Success);
+                        stopeRaw = new()
+                        {
+                            DateEntered = DateTime.Now
+                        };
+
+                        await LoadDataAsync();
+                        await dataGrid.Reload();
+                    }
+                    else
+                    {
+                        AlertMessage("Error while saving stope development", NotificationSeverity.Error);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            AlertMessage($"An error occurred while initializing {ex.Message}", NotificationSeverity.Warning);
+            throw;
+        }
     }
 
     private void OnLevelChange(int levelId)
@@ -140,13 +198,12 @@
         try
         {
             isLoading = true;
-            shaftList = await stockPileService.GetShaftAsync();
-            levelList = await stockPileService.GetLevelsAsync();
+            shiftList = await stockPileService.GetShiftAsync();
             StopeDefinitions = await stockPileService.GetStopeDefinationsync();
         }
         catch (Exception ex)
         {
-            AlertMessage("Opening tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+            AlertMessage($"Error while loading data {ex}", NotificationSeverity.Warning);
             throw;
         }
         finally

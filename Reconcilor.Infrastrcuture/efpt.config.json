@@ -63,10 +63,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[UGStopeDetail]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[UGStopesRaw]",
          "ObjectType": 0
       },

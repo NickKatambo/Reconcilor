@@ -29,8 +29,5 @@ public partial class Shaft
     public virtual ICollection<StopeDefinition> StopeDefinitions { get; set; } = new List<StopeDefinition>();
 
     [InverseProperty("Shaft")]
-    public virtual ICollection<UGStopesRaw> UGStopesRaws { get; set; } = new List<UGStopesRaw>();
-
-    [InverseProperty("Shaft")]
     public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();
 }

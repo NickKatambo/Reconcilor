@@ -14,13 +14,9 @@ public partial class UGStopesRaw
     [Key]
     public int Id { get; set; }
 
-    public int ShaftId { get; set; }
-
-    public int LevelId { get; set; }
+    public int StopeId { get; set; }
 
     public int ShiftId { get; set; }
-
-    public int StopeId { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime DateEntered { get; set; }
@@ -55,19 +51,7 @@ public partial class UGStopesRaw
     [Column(TypeName = "datetime")]
     public DateTime? EnteredOn { get; set; }
 
-    [ForeignKey("LevelId")]
-    [InverseProperty("UGStopesRaws")]
-    public virtual Level Level { get; set; }
-
-    [ForeignKey("ShaftId")]
-    [InverseProperty("UGStopesRaws")]
-    public virtual Shaft Shaft { get; set; }
-
     [ForeignKey("ShiftId")]
     [InverseProperty("UGStopesRaws")]
     public virtual Shift Shift { get; set; }
-
-    [ForeignKey("StopeId")]
-    [InverseProperty("UGStopesRaws")]
-    public virtual StopeDefinition Stope { get; set; }
 }

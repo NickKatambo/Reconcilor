@@ -39,12 +39,11 @@ public partial class ReconcilorContext : DbContext
 
     public virtual DbSet<Surveyor> Surveyors { get; set; }
 
-    public virtual DbSet<UGStopeDetail> UGStopeDetails { get; set; }
-
     public virtual DbSet<UGStopesRaw> UGStopesRaws { get; set; }
 
     public virtual DbSet<UGSurvey> UGSurveys { get; set; }
     public virtual DbSet<StockPileViewModel> StockPileViewModel { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BeltsRaw>(entity =>
@@ -98,32 +97,11 @@ public partial class ReconcilorContext : DbContext
                 .HasConstraintName("FK_StopeDevelopment_Shaft");
         });
 
-        modelBuilder.Entity<UGStopeDetail>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK_StopeDetail");
-
-            entity.HasOne(d => d.StopeDef).WithMany(p => p.UGStopeDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UGStopeDetail_StopeDevelopment");
-        });
-
         modelBuilder.Entity<UGStopesRaw>(entity =>
         {
-            entity.HasOne(d => d.Level).WithMany(p => p.UGStopesRaws)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UGStopesRaw_Level");
-
-            entity.HasOne(d => d.Shaft).WithMany(p => p.UGStopesRaws)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UGStopesRaw_Shaft");
-
             entity.HasOne(d => d.Shift).WithMany(p => p.UGStopesRaws)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UGStopesRaw_Shift");
-
-            entity.HasOne(d => d.Stope).WithMany(p => p.UGStopesRaws)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UGStopesRaw_StopeDevelopment");
         });
 
         modelBuilder.Entity<UGSurvey>(entity =>

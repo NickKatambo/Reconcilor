@@ -28,8 +28,5 @@ public partial class Level
     public virtual ICollection<StopeDefinition> StopeDefinitions { get; set; } = new List<StopeDefinition>();
 
     [InverseProperty("Level")]
-    public virtual ICollection<UGStopesRaw> UGStopesRaws { get; set; } = new List<UGStopesRaw>();
-
-    [InverseProperty("Level")]
     public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();
 }

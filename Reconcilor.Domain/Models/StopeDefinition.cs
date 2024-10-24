@@ -30,9 +30,34 @@ public partial class StopeDefinition
     [Unicode(false)]
     public string Crosscut { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime? DateEntered { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal? Tonnes { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal? TCu { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal? TCo { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal? Cu { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal? Co { get; set; }
+
     [StringLength(150)]
     [Unicode(false)]
     public string Comment { get; set; }
+
+    [StringLength(50)]
+    [Unicode(false)]
+    public string EnteredBy { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? EnteredOn { get; set; }
 
     [ForeignKey("LevelId")]
     [InverseProperty("StopeDefinitions")]
@@ -49,12 +74,6 @@ public partial class StopeDefinition
     [ForeignKey("ShaftId")]
     [InverseProperty("StopeDefinitions")]
     public virtual Shaft Shaft { get; set; }
-
-    [InverseProperty("StopeDef")]
-    public virtual ICollection<UGStopeDetail> UGStopeDetails { get; set; } = new List<UGStopeDetail>();
-
-    [InverseProperty("Stope")]
-    public virtual ICollection<UGStopesRaw> UGStopesRaws { get; set; } = new List<UGStopesRaw>();
 
     [InverseProperty("Stope")]
     public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();
