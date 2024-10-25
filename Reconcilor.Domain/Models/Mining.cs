@@ -21,4 +21,7 @@ public partial class Mining
 
     [InverseProperty("Mining")]
     public virtual ICollection<StopeDefinition> StopeDefinitions { get; set; } = new List<StopeDefinition>();
+
+    [InverseProperty("Stope")]
+    public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();
 }

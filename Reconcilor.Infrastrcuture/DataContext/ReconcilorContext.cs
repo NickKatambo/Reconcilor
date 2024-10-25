@@ -42,6 +42,7 @@ public partial class ReconcilorContext : DbContext
     public virtual DbSet<UGStopesRaw> UGStopesRaws { get; set; }
 
     public virtual DbSet<UGSurvey> UGSurveys { get; set; }
+
     public virtual DbSet<StockPileViewModel> StockPileViewModel { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -102,6 +103,10 @@ public partial class ReconcilorContext : DbContext
             entity.HasOne(d => d.Shift).WithMany(p => p.UGStopesRaws)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_UGStopesRaw_Shift");
+
+            entity.HasOne(d => d.Stope).WithMany(p => p.UGStopesRaws)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UGStopesRaw_StopeDefinition");
         });
 
         modelBuilder.Entity<UGSurvey>(entity =>
@@ -120,7 +125,11 @@ public partial class ReconcilorContext : DbContext
 
             entity.HasOne(d => d.Stope).WithMany(p => p.UGSurveys)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UGSurvey_StopeDevelopment");
+                .HasConstraintName("FK_UGSurvey_Mining1");
+
+            entity.HasOne(d => d.Surveyor).WithMany(p => p.UGSurveys)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UGSurvey_Surveyor");
         });
 
         OnModelCreatingPartial(modelBuilder);

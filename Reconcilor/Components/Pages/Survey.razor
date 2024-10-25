@@ -1,0 +1,263 @@
+﻿@page "/Survey"
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+@using Reconcilor.Application.Services
+
+<PageTitle>UG Survey</PageTitle>
+<RadzenAlert Variant="Variant.Filled" Icon="list" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Underground Survey
+</RadzenAlert>
+
+<RadzenCard class="rz-mx-auto rz-base-lighter">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Shaft" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@newSurvey.ShaftId Data=@shaftList Placeholder="Choose Shaft"
+                                    Change="@((args) => OnShaftChange((int)args))" TextProperty="@nameof(Shaft.ShaftName)" ValueProperty="@nameof(Shaft.ShaftId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Level" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@newSurvey.LevelId Data=@levelList Placeholder="Choose Level" TextProperty="@nameof(Level.LevelDescription)" ValueProperty="@nameof(Level.LevelId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Stope/Dev" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@newSurvey.StopeId Data=@miningList Placeholder="Choose Stope/Dev"
+                                    TextProperty="@nameof(Mining.Description)" ValueProperty="@nameof(Mining.Id)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Mine Model" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@newSurvey.ModelId Data=@MineModelList Placeholder="Choose Model"
+                                    TextProperty="@nameof(MineModel.ModelDescription)" ValueProperty="@nameof(MineModel.ModelId)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Surveyor" Variant="@variant">
+                    <RadzenDropDown @bind-Value=@newSurvey.SurveyorId Data=@SurveyorList Placeholder="Choose Surveyor"
+                                    TextProperty="@nameof(Surveyor.FullName)" ValueProperty="@nameof(Surveyor.Id)" Name="DropDownBindValue">
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Survey Date" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@newSurvey.SurveyDate" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Volume" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@newSurvey.Volume" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="Density" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@newSurvey.Density" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="Tonnes" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@newSurvey.Tonnes" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="TCu (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@newSurvey.TCu" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="TCo (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@newSurvey.TCo" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenStack>
+                    <RadzenButton class="mt-1" ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+        <RadzenDataGrid @ref="dataGrid" Data="@SurveyList.OrderByDescending(x => x.Id)" TItem="UGSurvey" AllowPaging="true" AllowSorting="true" PageSize="10" AllowColumnResize="true"
+                        AllowFiltering="true" FilterMode="FilterMode.Advanced" PagerHorizontalAlign="HorizontalAlign.Center" ColumnWidth="auto" IsLoading=@isLoading
+                        ShowPagingSummary="true" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="UGSurvey" Title="Shaft" Sortable="true" Property="Shaft.ShaftName">
+                    <Template>
+                        @context.Shaft.ShaftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UGSurvey" Property="SurveyDate" Title="Survey Date" FormatString="{0:d}" Frozen="true" />
+                <RadzenDataGridColumn TItem="UGSurvey" Title="Surveyor" Sortable="true" Property="Surveyor.FirstName" Frozen="true">
+                    <Template>
+                        @($"{@context.Surveyor.EmployeeCode} - {@context.Surveyor.FirstName} {@context.Surveyor.LastName}")
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UGSurvey" Title="Level" Sortable="true" Property="Level.LevelDescription" Frozen="true">
+                    <Template>
+                        @context.Level.LevelDescription
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UGSurvey" Title="Stope/Dev" Sortable="true" Property="Stope.Description" Frozen="true">
+                    <Template>
+                        @context.Stope.Description
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="@nameof(UGSurvey.Volume)" Title="Volume" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(UGSurvey.Density)" Title="Density" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(UGSurvey.Tonnes)" Title="Tonnes" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn Property="@nameof(UGSurvey.TCu)" Title="TCu %" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(UGSurvey.TCo)" Title="TCo %" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(UGSurvey.Cu)" Title="Cu" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn Property="@nameof(UGSurvey.Co)" Title="Co" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn TItem="UGSurvey" Title="Model" Sortable="true" Property="Model.ModelDescription" Frozen="true">
+                    <Template>
+                        @context.Model.ModelDescription
+                    </Template>
+                </RadzenDataGridColumn>
+              </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected NotificationService NotificationService { get; set; }
+    [Inject] protected StockPileService stockPileService { get; set; } = default!;
+
+    protected IEnumerable<UGSurvey> SurveyList = Enumerable.Empty<UGSurvey>();
+    public UGSurvey newSurvey = new() { SurveyDate = DateTime.Now };
+    private Variant variant = Variant.Outlined;
+    private RadzenDataGrid<UGSurvey> dataGrid;
+    protected int count;
+    protected List<Shaft> shaftList;
+    protected List<Level> levelList;
+    protected List<Mining> miningList;
+    protected List<MineModel> MineModelList;
+    protected List<Surveyor> SurveyorList;
+    protected bool isLoading = false;
+
+    private int selectedShaftId;
+    private int selectedLevelId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            AlertMessage($"Error occurred while On InitializedAsync {ex}", NotificationSeverity.Warning);
+            throw;
+        }
+    }
+
+    protected async Task LoadDataAsync()
+    {
+        try
+        {
+            isLoading = true;
+            shaftList = await stockPileService.GetShaftAsync();
+            levelList = await stockPileService.GetLevelsAsync();
+            miningList = await stockPileService.GetMiningAsync();
+            MineModelList = await stockPileService.GetMineModelAsync();
+            SurveyorList = await stockPileService.GetSurveyorAsync();
+            SurveyList = await stockPileService.GetUndergroundSurveyAsync();
+        }
+        catch (Exception ex)
+        {
+            AlertMessage($"Error occurred while loading data {ex}", NotificationSeverity.Warning);
+            throw;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task OnShaftChange(int shaftId)
+    {
+        selectedShaftId = shaftId;
+        var query = await stockPileService.GetLevelsAsync();
+        levelList = query.Where(c => c.ShaftId == selectedShaftId).ToList();
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+
+    async Task SubmitData()
+    {
+        try
+        {
+            if (newSurvey.ShaftId == 0)
+            {
+                AlertMessage("Select Shaft from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (newSurvey.LevelId == 0)
+            {
+                AlertMessage("Select Level from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (newSurvey.StopeId == 0)
+            {
+                AlertMessage("Select Stope/Dev from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (newSurvey.ModelId == 0)
+            {
+                AlertMessage("Select Mining Model from the list", NotificationSeverity.Warning);
+                return;
+            }
+            if (newSurvey.SurveyorId == 0)
+            {
+                AlertMessage("Select Surveyor from the list", NotificationSeverity.Warning);
+                return;
+            }
+            else
+            {
+                try
+                {
+                    newSurvey.Id = 0;
+                    newSurvey.EnteredOn = DateTime.Now;
+                    newSurvey.EnteredBy = "admin";
+                    newSurvey.Co = ReconUtility.CalculateTotalGrade(newSurvey.TCo, newSurvey.Tonnes);
+                    newSurvey.Cu = ReconUtility.CalculateTotalGrade(newSurvey.TCu, newSurvey.Tonnes);
+
+                    var result = _repository.SaveDataAsync(newSurvey);
+                    if (result is not null && result.Result is not null)
+                    {
+                        AlertMessage("Underground Survey saved successfully", NotificationSeverity.Success);
+                        newSurvey = new()
+                        {
+                            SurveyDate = DateTime.Now
+                        };
+
+                        await LoadDataAsync();
+                        await dataGrid.Reload();
+                    }
+                    else
+                    {
+                        AlertMessage("Error while saving stope development", NotificationSeverity.Error);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+        }
+    }
+}

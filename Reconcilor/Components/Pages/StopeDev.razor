@@ -1,4 +1,5 @@
 ﻿@page "/stopedefinition"
+@using Reconcilor.Application
 @using Reconcilor.Application.Interfaces
 @using Reconcilor.Application.Services
 
@@ -30,7 +31,7 @@
                     </RadzenDropDown>
                 </RadzenFormField>
                 <RadzenFormField Text="Mine Model" Variant="@variant">
-                    <RadzenDropDown @bind-Value=@stopesDef.MineModelId Data=@MineModelList Placeholder="Choose Level"
+                    <RadzenDropDown @bind-Value=@stopesDef.MineModelId Data=@MineModelList Placeholder="Choose Model"
                                     TextProperty="@nameof(MineModel.ModelDescription)" ValueProperty="@nameof(MineModel.ModelId)" Name="DropDownBindValue">
                     </RadzenDropDown>
                 </RadzenFormField>
@@ -76,7 +77,7 @@
                         @context.Level.LevelDescription
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="StopeDefinition" Title="Mining Activity" Sortable="true" Property="Mining.Description" Frozen="true">
+                <RadzenDataGridColumn TItem="StopeDefinition" Title="Stope/Dev" Sortable="true" Property="Mining.Description" Frozen="true">
                     <Template>
                         @context.Mining.Description
                     </Template>
@@ -152,11 +153,11 @@
             levelList = await stockPileService.GetLevelsAsync();
             miningList = await stockPileService.GetMiningAsync();
             MineModelList = await stockPileService.GetMineModelAsync();
-            stopeDefinitionList = await stockPileService.GetStopeDefinationAsync ();
+            stopeDefinitionList = await stockPileService.GetStopeDefinationAsync();
         }
         catch (Exception ex)
         {
-            AlertMessage("Opening tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+            AlertMessage($"Error occurred while loading data {ex}", NotificationSeverity.Warning);
             throw;
         }
         finally
@@ -199,7 +200,13 @@
                 try
                 {
                     stopesDef.Id = 0;
+                    stopesDef.EnteredOn = DateTime.Now;
+                    stopesDef.EnteredBy = "admin";
                     stopesDef.StopeID += $"_{stopesDef.Crosscut.Trim().ToUpper()}";
+
+                    stopesDef.Co = ReconUtility.CalculateTotalGrade(stopesDef.TCo.Value, stopesDef.Tonnes.Value);
+                    stopesDef.Cu = ReconUtility.CalculateTotalGrade(stopesDef.TCu.Value, stopesDef.Tonnes.Value);
+
                     var result = _repository.SaveDataAsync(stopesDef);
                     if (result is not null && result.Result is not null)
                     {

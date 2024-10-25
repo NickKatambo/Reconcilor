@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/" />
+    <base href="/@(siteName)" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="Reconcilor.styles.css" />
@@ -24,6 +24,16 @@
 @code {
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
+    public string siteName { get; set; } = "";
+
+    protected override Task OnInitializedAsync()
+    {
+        var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == Environments.Development;
+        if (!isDevelopment)
+            siteName = "Reconcilor/";
+
+        return base.OnInitializedAsync();
+    }
 
     private IComponentRenderMode? RenderModeForPage => HttpContext.Request.Path.StartsWithSegments("/Account")
         ? null

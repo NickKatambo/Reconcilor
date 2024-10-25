@@ -87,6 +87,17 @@ namespace Reconcilor.Application.Services
                                  .ToListAsync();
         }
 
+        public async Task<List<UGSurvey>> GetUndergroundSurveyAsync()
+        {
+            return await _reconcilorContext.UGSurveys
+                        .Include(s => s.Shaft)
+                        .Include(l => l.Level)
+                        .Include(m => m.Stope)
+                        .Include(n => n.Model)
+                        .Include(u => u.Surveyor)
+                                 .ToListAsync();
+        }
+
         public async Task<List<Level>> GetLevelsAsync()
         {
             return await _reconcilorContext.Levels
@@ -105,6 +116,12 @@ namespace Reconcilor.Application.Services
             return await _reconcilorContext.MineModels
                                  .ToListAsync();
         }
-        
+
+        public async Task<List<Surveyor>> GetSurveyorAsync()
+        {
+            return await _reconcilorContext.Surveyors
+                                 .ToListAsync();
+        }
+
     }
 }

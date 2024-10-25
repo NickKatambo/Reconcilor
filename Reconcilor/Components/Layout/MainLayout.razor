@@ -25,9 +25,9 @@
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebarExpanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Icon="home" Path="/" />
-            <RadzenPanelMenuItem Text="Dashboard" Icon="dashboard" Path="dashboard" />
+            <RadzenPanelMenuItem Text="Home" Icon="home" Path="" />
             <RadzenPanelMenuItem Text="SURFACE" Icon="donut_small" IconColor="@Colors.WarningDark">
+                <RadzenPanelMenuItem Text="Stock Piles" Path="stockpiles" Icon="change_history"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="RMD" title="Rod Mill Discharge" Path="rmd" Icon="assignment_returned"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Belts Raw" title="Belts Raw" Path="beltraw" Icon="cached"></RadzenPanelMenuItem>
 @*                 <RadzenPanelMenuItem Text="TextArea" Path="textarea" Icon="description"></RadzenPanelMenuItem>
@@ -36,13 +36,12 @@
                 <RadzenPanelMenuItem Text="DatePicker" Path="datepicker" Icon="date_range"></RadzenPanelMenuItem> *@
             </RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="UNDERGROUND" Icon="assignment_returned" IconColor="@Colors.WarningDark">
-                <RadzenPanelMenuItem Text="Stock Piles" Path="stockpiles" Icon="change_history"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Stope Definition" Path="stopedefinition" Icon="receipt"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Stopes Raw" Path="stoperaw" Icon="assignment_return"></RadzenPanelMenuItem>
                 @* <RadzenPanelMenuItem Text="Stock Trends" Path="stocktrend" Icon="assessment"></RadzenPanelMenuItem> *@
             </RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="SURVEY" Icon="lightbulb" IconColor="@Colors.WarningDark">
-                <RadzenPanelMenuItem Text="UG Survey" Path="" Icon="change_history"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Underground Survey" Path="Survey" Icon="group_work"></RadzenPanelMenuItem>
                 @* <RadzenPanelMenuItem Text="Trends" Path="" Icon="donut_small"></RadzenPanelMenuItem> *@
             </RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="SYSTEM SETUP" Icon="build" IconColor="@Colors.WarningDark">
