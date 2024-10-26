@@ -32,6 +32,9 @@ public partial class UGSurvey
     public int Density { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
+    public decimal Tonnes { get; set; }
+
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal TCu { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
@@ -68,5 +71,9 @@ public partial class UGSurvey
 
     [ForeignKey("StopeId")]
     [InverseProperty("UGSurveys")]
-    public virtual StopeDevelopment Stope { get; set; }
+    public virtual Mining Stope { get; set; }
+
+    [ForeignKey("SurveyorId")]
+    [InverseProperty("UGSurveys")]
+    public virtual Surveyor Surveyor { get; set; }
 }

@@ -1,0 +1,178 @@
+﻿@page "/stopedetails"
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+@using Reconcilor.Application.Services
+@* 
+<PageTitle>Stopes Detail</PageTitle>
+<RadzenAlert Variant="Variant.Filled" Icon="all_out" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Stopes Detail
+</RadzenAlert>
+<RadzenCard class="rz-mx-auto rz-base-lighter">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Shaft/Level/Model" Variant="@variant" Component="DropDownDataGridColumns">
+                    <RadzenDropDownDataGrid @bind-Value=@stopeDetail.StopeDefId Data=@StopeDefinitions Placeholder="Choose One" TextProperty="@nameof(StopeDefinition.StopeID)" ValueProperty="@nameof(StopeDefinition.Id)"
+                                            AllowColumnResize="true" AllowFilteringByAllStringColumns="true" Name="DropDownDataGridColumns">
+                        <Columns>
+                            <RadzenDropDownDataGridColumn Property="@nameof(StopeDefinition.StopeID)" Title="Stope ID" Width="120px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.Shaft.ShaftName" SortProperty="@nameof(StopeDefinition.ShaftId)" Title="Shaft" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.Level.LevelDescription" SortProperty="@nameof(StopeDefinition.LevelId)" Title="Level" Width="100px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.Mining.Description" SortProperty="@nameof(StopeDefinition.MiningId)" Title="Activity" Width="150px" />
+                            <RadzenDropDownDataGridColumn Property="StopeDefinition.MineModel.ModelDescription" SortProperty="@nameof(StopeDefinition.MineModelId)" Title="Model" Width="150px" />
+                        </Columns>
+                    </RadzenDropDownDataGrid>
+
+                </RadzenFormField>
+                <RadzenFormField Text="Date Entered" Variant="@variant">
+                    <RadzenDatePicker @bind-Value="@stopeDetail.DateEntered" DateFormat="dd-MMM-yyyy" Name="RadzenDatePickerBindValue" ShowCalendarWeek />
+                </RadzenFormField>
+                <RadzenFormField Text="Tonnes" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stopeDetail.Tonnes" Min="0" Max="1000000" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="TCu (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stopeDetail.TCu" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenFormField Text="TCo (%)" Variant="@variant">
+                    <RadzenNumeric @bind-Value="@stopeDetail.TCo" Min="0" Max="1000000" />
+                </RadzenFormField>
+                <RadzenStack>
+                    <RadzenButton class="mt-1" ButtonType="ButtonType.Submit" Click="@SubmitData" Icon="check_circle" Size="ButtonSize.Medium" Text="Submit" ButtonStyle="ButtonStyle.Success"></RadzenButton>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="1px">
+@*         <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" TItem="UGStopeDetail"
+                        Data="@stopeDetailList.OrderByDescending(x => x.Id)" ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or">
+            <Columns>
+                <RadzenDataGridColumn TItem="UGStopeDetail" Property="Id" Title="Stope ID" /> 
+                <RadzenDataGridColumn TItem="UGStopeDetail" Title="Shaft" Sortable="true" Property="StopeDef.Shaft.ShaftName" >
+                    <Template>
+                        @context.StopeDef.Shaft.ShaftName
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UGStopeDetail" Title="Stope ID" Sortable="true" Property="StopeDef.StopeID" Frozen="true">
+                    <Template>
+                        @context.StopeDef.StopeID
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="@nameof(UGStopeDetail.DateEntered)" Title="Date Entered" FormatString="{0:d}" />
+                <RadzenDataGridColumn TItem="UGStopeDetail" Title="Model" Sortable="true" Property="StopeDef.MineModel.ModelDescription" Frozen="true">
+                    <Template>
+                        @context.StopeDef.MineModel.ModelDescription
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UGStopeDetail" Title="Mining Activity" Sortable="true" Property="StopeDef.Mining.Description" Frozen="true">
+                    <Template>
+                        @context.StopeDef.Mining.Description
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="@nameof(UGStopeDetail.Tonnes)" Title="Tonnes" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn Property="@nameof(UGStopeDetail.TCu)" Title="TCu" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(UGStopeDetail.TCo)" Title="TCo" Frozen="true" />
+                <RadzenDataGridColumn Property="@nameof(UGStopeDetail.Cu)" Title="Cu" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn Property="@nameof(UGStopeDetail.Co)" Title="Co" Frozen="true" FormatString="{0:0,##.00}" />
+                <RadzenDataGridColumn Property="@nameof(UGStopeDetail.EnteredBy)" Title="Entered By" Frozen="true" />
+            </Columns>
+        </RadzenDataGrid> 
+    </RadzenStack>
+</RadzenCard>
+ *@
+
+@code {
+
+    // Variant variant = Variant.Outlined;
+    // // public UGStopeDetail stopeDetail = new(){ DateEntered = DateTime.Now };
+    // [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    // [Inject] protected DialogService DialogService { get; set; } = default!;
+    // [Inject] protected NotificationService NotificationService { get; set; }
+    // [Inject] protected StockPileService stockPileService { get; set; } = default!;
+    // protected bool isLoading = false;
+    // IEnumerable<StopeDefinition> StopeDefinitions;
+
+    // protected int count;
+    // private IEnumerable<UGStopeDetail> stopeDetailList = Enumerable.Empty<UGStopeDetail>();
+    // private RadzenDataGrid<UGStopeDetail> dataGrid;
+
+    // private async Task SubmitData()
+    // {
+    //     try
+    //     {
+    //         isLoading = true;
+    //         stopeDetail.Id = 0;
+    //         stopeDetail.EnteredOn = DateTime.Now;
+    //         stopeDetail.EnteredBy = "admin";
+
+    //         stopeDetail.Co = ReconUtility.CalculateTotalGrade(stopeDetail.TCo, stopeDetail.Tonnes);
+    //         stopeDetail.Cu = ReconUtility.CalculateTotalGrade(stopeDetail.TCu, stopeDetail.Tonnes);
+
+    //         var result = _repository.SaveDataAsync(stopeDetail);
+    //         if (result is not null && result.Result is not null)
+    //         {
+    //             AlertMessage("Underground Stope Details saved successfully", NotificationSeverity.Success);
+    //             stopeDetail = new() { DateEntered = DateTime.Now };
+    //             await LoadDataAsync();
+    //             await dataGrid.Reload();
+    //         }
+    //         else
+    //         {
+    //             AlertMessage("Error saving rod mill discharge results", NotificationSeverity.Error);
+    //             return;
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+    //     }
+    //     finally
+    //     {
+    //         isLoading = false;
+    //     }
+    // }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     await LoadDataAsync();
+    // }
+
+    // protected async Task LoadDataAsync()
+    // {
+    //     try
+    //     {
+    //         isLoading = true;
+    //         StopeDefinitions = await stockPileService.GetStopeDefinationsync();
+    //         stopeDetailList = await stockPileService.GetStopeDetailsync();
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         AlertMessage("Opening tonnes cannot be less than zero (0)", NotificationSeverity.Warning);
+    //         throw;
+    //     }
+    //     finally
+    //     {
+    //         isLoading = false;
+    //     }
+    // }
+
+    //void ShowNotification(NotificationMessage message) => NotificationService.Notify(message);
+
+    // void AlertMessage(string msg, NotificationSeverity severity)
+    // {
+    //     ShowNotification(new NotificationMessage
+    //         {
+    //             Severity = severity,
+    //             Summary = "Reconcilor",
+    //             Detail = $"{msg ?? "No message"}",
+    //             Duration = 4000
+    //         });
+    // }
+}

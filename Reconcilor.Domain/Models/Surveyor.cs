@@ -29,4 +29,11 @@ public partial class Surveyor
     public string LastName { get; set; }
 
     public bool IsActive { get; set; }
+
+    [StringLength(250)]
+    [Unicode(false)]
+    public string FullName { get; set; }
+
+    [InverseProperty("Surveyor")]
+    public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();
 }

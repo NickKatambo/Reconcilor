@@ -1,9 +1,14 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
+using Reconcilor.Application;
+using Reconcilor.Application.Interfaces;
+using Reconcilor.Application.Services;
 using Reconcilor.Components;
 using Reconcilor.Components.Account;
 using Reconcilor.Data;
+using Reconcilor.Infrastrcuture.DataContext;
 
 namespace Reconcilor
 {
@@ -32,6 +37,8 @@ namespace Reconcilor
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<ReconcilorContext>(options =>
+                options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -40,6 +47,10 @@ namespace Reconcilor
                 .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+            builder.Services.AddScoped<IReconcilorRepository, ReconcilorService>();
+            builder.Services.AddScoped<StockPileService>();
+            builder.Services.AddScoped<ReconUtility>();
+            builder.Services.AddRadzenComponents();
 
             var app = builder.Build();
 

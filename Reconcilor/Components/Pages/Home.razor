@@ -1,7 +1,106 @@
 ﻿@page "/"
 
 <PageTitle>Home</PageTitle>
+@using System.Globalization
 
-<h1>Hello, world!</h1>
+@* <RadzenCard class="rz-my-12 rz-mx-auto rz-p-1 rz-p-md-12 rz-base-lighter">
+    <RadzenStack class="rz-p-0 rz-p-md-6 rz-p-lg-12">
+        <RadzenCard Variant="Variant.Outlined">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                <RadzenCheckBox @bind-Value="@annotation" Name="Cu Grade"></RadzenCheckBox>
+                <RadzenLabel Text="Cu Grade" Component="annotation" />
+            </RadzenStack>
+        </RadzenCard>
 
-Welcome to your new app.
+        <RadzenChart>
+            <RadzenLineSeries Smooth="true" Data="@revenue2023" CategoryProperty="Date" Title="2023" ValueProperty="Revenue" RenderingOrder="1">
+                <RadzenSeriesAnnotation Visible="@annotation" TItem="DataItem" Data="@revenue2023[7]" OffsetY="-16" Text="Cu Grade" />
+                <RadzenMarkers MarkerType="MarkerType.Circle" />
+            </RadzenLineSeries>
+            <RadzenCategoryAxis Padding="20" />
+            <RadzenValueAxis Formatter="@FormatAsUSD">
+                <RadzenGridLines Visible="true" />
+                <RadzenAxisTitle Text="Grade %" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </RadzenStack>
+</RadzenCard> *@
+
+
+@code {
+    bool annotation = true;
+
+    class DataItem
+    {
+        public string Date { get; set; }
+        public double Revenue { get; set; }
+    }
+
+    string FormatAsUSD(object value)
+    {
+        return ((double)value).ToString(); //.ToString("d0", CultureInfo.CreateSpecificCulture("en-US"));
+    }
+
+    DataItem[] revenue2023 = new DataItem[] {
+        new DataItem
+        {
+            Date = "Jan",
+            Revenue = 23
+        },
+        new DataItem
+        {
+            Date = "Feb",
+            Revenue = 26
+        },
+        new DataItem
+        {
+            Date = "Mar",
+            Revenue = 23
+        },
+        new DataItem
+        {
+            Date = "Apr",
+            Revenue = 24
+        },
+        new DataItem
+        {
+            Date = "May",
+            Revenue = 21
+        },
+        new DataItem
+        {
+            Date = "Jun",
+            Revenue = 25
+        },
+        new DataItem
+        {
+            Date = "Jul",
+            Revenue = 27
+        },
+        new DataItem
+        {
+            Date = "Aug",
+            Revenue = 28
+        },
+        new DataItem
+        {
+            Date = "Sept",
+            Revenue = 21.2
+        },
+        new DataItem
+        {
+            Date = "Oct",
+            Revenue = 28
+        },
+        new DataItem
+        {
+            Date = "Nov",
+            Revenue = 29
+        },
+        new DataItem
+        {
+            Date = "Dec",
+            Revenue = 24
+        }
+    };
+}

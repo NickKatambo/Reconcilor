@@ -20,11 +20,12 @@ public partial class Level
 
     public int ShaftId { get; set; }
 
-    [InverseProperty("Level")]
-    public virtual ICollection<StopeDevelopment> StopeDevelopments { get; set; } = new List<StopeDevelopment>();
+    [ForeignKey("ShaftId")]
+    [InverseProperty("Levels")]
+    public virtual Shaft Shaft { get; set; }
 
     [InverseProperty("Level")]
-    public virtual ICollection<UGStopesRaw> UGStopesRaws { get; set; } = new List<UGStopesRaw>();
+    public virtual ICollection<StopeDefinition> StopeDefinitions { get; set; } = new List<StopeDefinition>();
 
     [InverseProperty("Level")]
     public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();

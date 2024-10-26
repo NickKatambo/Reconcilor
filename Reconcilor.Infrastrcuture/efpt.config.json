@@ -55,15 +55,11 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[StopeDevelopment]",
+         "Name": "[dbo].[StopeDefinition]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[Surveyor]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[UGStopeDetail]",
          "ObjectType": 0
       },
       {

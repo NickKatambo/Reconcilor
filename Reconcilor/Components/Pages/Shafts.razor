@@ -1,0 +1,110 @@
+﻿@page "/shafts"
+
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+
+<RadzenAlert Variant="Variant.Filled" Icon="dns" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Shafts
+</RadzenAlert>
+
+<RadzenCard>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Shaft" Variant="@variant" title="Shaft name">
+                    <RadzenTextBox @bind-Value="@shaft.ShaftName" Placeholder="Enter shaft name here" Style="width: 100%;" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack class="mt-1" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal" Gap="0">
+        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" Data="@shaftList" 
+                        ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or" class="rz-secondary-dark">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(Shaft.ShaftId)" Visible="false" Filterable="false" Title="ID" Frozen="true" TextAlign="TextAlign.Center" Width="100px" />
+                <RadzenDataGridColumn Property="@nameof(shaft.ShaftName)" Title="Shaft" Frozen="true" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected NotificationService NotificationService { get; set; }
+
+    public Shaft shaft = new();
+    private Variant variant = Variant.Outlined;
+    private IEnumerable<Shaft> shaftList = Enumerable.Empty<Shaft>();
+    private RadzenDataGrid<Shaft> dataGrid;
+    protected int count;
+
+    async Task SubmitData()
+    {
+        if (string.IsNullOrEmpty(shaft.ShaftName))
+        {
+            AlertMessage("Shaft name is a required field", NotificationSeverity.Warning);
+            return;
+        }
+        else
+        {
+            try
+            {
+                shaft.ShaftId = 0;
+
+                var result = _repository.SaveDataAsync(shaft);
+                if (result is not null && result.Result is not null)
+                {
+                    AlertMessage("Shaft saved successfully", NotificationSeverity.Success);
+                    shaft = new();
+
+                    await LoadDataAsync();
+                    await dataGrid.Reload();
+                }
+                else
+                {
+                    AlertMessage("Error while saving shaft", NotificationSeverity.Error);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+
+    private async Task LoadDataAsync()
+    {
+        shaftList = await _repository.GetDataAsync<Shaft>();
+        count = shaftList.Count();
+    }
+}

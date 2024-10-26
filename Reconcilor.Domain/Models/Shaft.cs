@@ -19,17 +19,14 @@ public partial class Shaft
     [Unicode(false)]
     public string ShaftName { get; set; }
 
-    [InverseProperty("ShaftNavigation")]
+    [InverseProperty("Shaft")]
     public virtual ICollection<BeltsRaw> BeltsRaws { get; set; } = new List<BeltsRaw>();
 
     [InverseProperty("Shaft")]
-    public virtual ICollection<StopeDevelopment> StopeDevelopments { get; set; } = new List<StopeDevelopment>();
+    public virtual ICollection<Level> Levels { get; set; } = new List<Level>();
 
     [InverseProperty("Shaft")]
-    public virtual ICollection<UGStopeDetail> UGStopeDetails { get; set; } = new List<UGStopeDetail>();
-
-    [InverseProperty("Shaft")]
-    public virtual ICollection<UGStopesRaw> UGStopesRaws { get; set; } = new List<UGStopesRaw>();
+    public virtual ICollection<StopeDefinition> StopeDefinitions { get; set; } = new List<StopeDefinition>();
 
     [InverseProperty("Shaft")]
     public virtual ICollection<UGSurvey> UGSurveys { get; set; } = new List<UGSurvey>();

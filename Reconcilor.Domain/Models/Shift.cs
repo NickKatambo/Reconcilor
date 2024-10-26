@@ -23,7 +23,7 @@ public partial class Shift
 
     public TimeOnly TimeTo { get; set; }
 
-    [InverseProperty("Shaft")]
+    [InverseProperty("Shift")]
     public virtual ICollection<BeltsRaw> BeltsRaws { get; set; } = new List<BeltsRaw>();
 
     [InverseProperty("Shift")]

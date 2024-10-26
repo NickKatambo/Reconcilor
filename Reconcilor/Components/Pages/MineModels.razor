@@ -1,0 +1,108 @@
+﻿@page "/minemodel"
+
+@using Reconcilor.Application
+@using Reconcilor.Application.Interfaces
+
+<RadzenAlert Variant="Variant.Filled" Icon="open_with" AlertStyle="AlertStyle.Dark" Size="AlertSize.Medium" Shade="Shade.Dark" AllowClose=false>
+    Mine Model
+</RadzenAlert>
+
+<RadzenCard>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenStack>
+                <RadzenFormField Text="Model Name" Variant="@variant" title="Model Name">
+                    <RadzenTextBox @bind-Value="@mineModel.ModelDescription" Placeholder="Enter model name here" Style="width: 100%;" />
+                </RadzenFormField>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack class="mt-2" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Normal" Gap="0">
+        <RadzenButton ButtonType="ButtonType.Submit" Click="@SubmitData" Text="Submit"></RadzenButton>
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard class="mt-3">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="0">
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10"
+                        AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true" Data="@mineModelList"
+                        ColumnWidth="auto" LogicalFilterOperator="LogicalFilterOperator.Or" class="rz-secondary-dark">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(mineModel.ModelDescription)" Title="Mining Model" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Inject] private IReconcilorRepository _repository { get; set; } = default!;
+    [Inject] protected DialogService DialogService { get; set; } = default!;
+    [Inject] protected NotificationService NotificationService { get; set; }
+
+    public MineModel mineModel = new();
+    private Variant variant = Variant.Outlined;
+    private IEnumerable<MineModel> mineModelList = Enumerable.Empty<MineModel>();
+    private RadzenDataGrid<MineModel> dataGrid;
+    protected int count;
+
+    async Task SubmitData()
+    {
+        if (string.IsNullOrEmpty(mineModel.ModelDescription))
+        {
+            AlertMessage("Model name is a required field", NotificationSeverity.Warning);
+            return;
+        }
+        else
+        {
+            try
+            {
+                mineModel.ModelId = 0;
+                var result = _repository.SaveDataAsync(mineModel);
+                if (result is not null && result.Result is not null)
+                {
+                    AlertMessage("Mine model saved successfully", NotificationSeverity.Success);
+                    mineModel = new();
+
+                    await LoadDataAsync();
+                    await dataGrid.Reload();
+                }
+                else
+                {
+                    AlertMessage("Error while saving mine model", NotificationSeverity.Error);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertMessage($"Error: {ex.Message} | Detail: {ex.InnerException ?? null}", NotificationSeverity.Error);
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    void AlertMessage(string msg, NotificationSeverity severity)
+    {
+        ShowNotification(new NotificationMessage
+            {
+                Severity = severity,
+                Summary = "Reconcilor",
+                Detail = $"{msg ?? "No message"}",
+                Duration = 4000
+            });
+    }
+
+    void ShowNotification(NotificationMessage message)
+    {
+        NotificationService.Notify(message);
+    }
+
+    private async Task LoadDataAsync()
+    {
+        mineModelList = await _repository.GetDataAsync<MineModel>();
+        count = mineModelList.Count();
+    }
+}
